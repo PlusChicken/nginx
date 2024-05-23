@@ -4,7 +4,7 @@
       style="width: 17vw; height: 10vw; margin-bottom: 50px"
       :src="djiLogo"
     />
-    <p class="logo fz35 pb50">Pilot Cloud API Demo</p>
+    <p class="logo fz35 pb50">灵宙飞行巡检平台</p>
     <a-form
       layout="inline"
       :model="formState"
@@ -53,7 +53,7 @@ import { getRoot } from '/@/root'
 import router from '/@/router'
 import { EComponentName, ELocalStorageKey, ERouterName, EUserType } from '/@/types'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-import djiLogo from '/@/assets/icons/dji_logo.png'
+import djiLogo from '/@/assets/icons/lingzhou_logo.png'
 
 const root = getRoot()
 

@@ -5,7 +5,7 @@
       style="width: 17vw; height: 10vw; margin-bottom: 50px"
       :src="djiLogo"
     />
-    <p class="fz35 pb50" style="color: #2d8cf0">Cloud API Demo</p>
+    <p class="fz35 pb50" style="color: #2d8cf0">灵宙飞行巡检平台</p>
     <a-form
       layout="inline"
       :model="formState"
@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import djiLogo from '/@/assets/icons/dji_logo.png'
+import djiLogo from '/@/assets/icons/lingzhou_logo.png'
 import { LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { reactive, computed, UnwrapRef } from 'vue'

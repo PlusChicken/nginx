@@ -71,7 +71,7 @@ const selected = ref<string>(root.$route.path)
 
 onMounted(() => {
   getPlatformInfo().then(res => {
-    workspaceName.value = res.data.workspace_name
+    workspaceName.value = '灵宙飞行巡检平台'
   })
 })
 
