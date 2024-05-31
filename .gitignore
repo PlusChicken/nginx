@@ -1,0 +1,7 @@
+.idea/workspace.xml
+
+# 忽略所有 .log 文件
+*.log
+
+# 忽略所有 .tmp 文件
+*.tmp
