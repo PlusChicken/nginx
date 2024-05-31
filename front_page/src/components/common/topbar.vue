@@ -41,7 +41,7 @@ import { message } from 'ant-design-vue'
 import { defineComponent, onMounted, ref } from 'vue'
 import { getRoot } from '/@/root'
 import { getPlatformInfo } from '/@/api/manage'
-import { ELocalStorageKey, ERouterName } from '/@/types'
+import { ELocalStorageKey, ERouterName, ERouterNameCN } from '/@/types'
 import { UserOutlined, ExportOutlined } from '@ant-design/icons-vue'
 import cloudapi from '/@/assets/icons/cloudapi.png'
 
