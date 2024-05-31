@@ -24,6 +24,32 @@ export enum ERouterName {
     PILOT_BIND = 'pilot-bind'
 }
 
+export enum ERouterNameCN {
+    ELEMENT = '元素',
+    PROJECT = '项目',
+    HOME = '主页',
+    TSA = '人员设备',
+    LAYER = '层次',
+    MEDIA = '媒体',
+    WAYLINE = '航线',
+    LIVESTREAM = '直播',
+    LIVING = '在线',
+    WORKSPACE = '项目空间',
+    MEMBERS = '用户',
+    DEVICES = '设备',
+    TASK = '任务',
+    CREATE_PLAN = '创建计划',
+    SELECT_PLAN = '选择计划',
+    FIRMWARES = '固件',
+    FLIGHT_AREA = '飞行区域',
+
+    PILOT = 'pilot登陆',
+    PILOT_HOME = 'pilot主页',
+    PILOT_MEDIA = 'pilot媒体',
+    PILOT_LIVESHARE = 'pilot实时共享',
+    PILOT_BIND = 'pilot绑定'
+}
+
 export enum EStorageKey {
     LANG_CODE = 'DJI_CREATE_VITE_H5_APP:lang_code',
     TEST_TOOLS_POSITION_STORAGE_KEY = 'DJI_CREATE_VITE_H5_APP:test_tools_position',
@@ -54,7 +80,7 @@ export enum EComponentName {
 }
 
 export enum ELocalStorageKey {
-    Username = 'username',
+    Username = '用户名',
     WorkspaceId = 'workspace_id',
     Token = 'x-auth-token',
     PlatformName = 'platform_name',
