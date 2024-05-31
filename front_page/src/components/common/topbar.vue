@@ -13,7 +13,7 @@
         :class="{
             'menu-item': true,
         }">
-          <span @click="selectedRoute(item.path)" :style="selected === item.path ? 'color: #2d8cf0;' : 'color: white'">{{ item.label }}</span>
+          <span @click="selectedRoute(item.path)" :style="selected === item.path ? 'color: #97CBFF;' : 'color: white'">{{ item.label }}</span>
         </router-link>
     </a-space>
 

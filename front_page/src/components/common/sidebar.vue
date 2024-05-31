@@ -109,7 +109,7 @@ export default defineComponent({
     color: $text-white-basic;
     cursor: pointer;
     &.selected {
-      background-color: #101010;
+      background-color: #97CBFF;
       color: $primary;
     }
     &.disabled {
