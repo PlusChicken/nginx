@@ -1,5 +1,5 @@
 <template>
-  <div class="header">Task Plan Library</div>
+  <div class="header">任务计划库</div>
   <div class="plan-panel-wrapper">
     <a-table class="plan-table" :columns="columns" :data-source="plansData.data" row-key="job_id"
       :pagination="paginationProp" :scroll="{ x: '100%', y: 600 }" @change="refreshData">

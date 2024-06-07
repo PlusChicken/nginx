@@ -61,10 +61,10 @@ interface IOptions {
 const username = ref(localStorage.getItem(ELocalStorageKey.Username))
 const workspaceName = ref('')
 const options = [
-  { key: 0, label: ERouterNameCN.WORKSPACE.charAt(0).toUpperCase() + ERouterNameCN.WORKSPACE.substr(1), path: '/' + ERouterName.WORKSPACE },
-  { key: 1, label: ERouterNameCN.MEMBERS.charAt(0).toUpperCase() + ERouterNameCN.MEMBERS.substr(1), path: '/' + ERouterName.MEMBERS },
-  { key: 2, label: ERouterNameCN.DEVICES.charAt(0).toUpperCase() + ERouterNameCN.DEVICES.substr(1), path: '/' + ERouterName.DEVICES },
-  { key: 3, label: ERouterNameCN.FIRMWARES.charAt(0).toUpperCase() + ERouterNameCN.FIRMWARES.substr(1), path: '/' + ERouterName.FIRMWARES },
+  { key: 0, label: ERouterNameCN.TASKCENTER.charAt(0).toUpperCase() + ERouterNameCN.TASKCENTER.substr(1), path: '/' + ERouterName.TASKCENTER },
+  { key: 1, label: ERouterNameCN.WORKSPACE.charAt(0).toUpperCase() + ERouterNameCN.WORKSPACE.substr(1), path: '/' + ERouterName.WORKSPACE },
+  { key: 2, label: ERouterNameCN.MEMBERS.charAt(0).toUpperCase() + ERouterNameCN.MEMBERS.substr(1), path: '/' + ERouterName.MEMBERS },
+  { key: 3, label: ERouterNameCN.DEVICES.charAt(0).toUpperCase() + ERouterNameCN.DEVICES.substr(1), path: '/' + ERouterName.DEVICES },
 ]
 
 const selected = ref<string>(root.$route.path)
