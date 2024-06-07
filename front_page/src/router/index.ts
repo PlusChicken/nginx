@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/' + ERouterName.TASKCENTER,
     name: ERouterName.TASKCENTER,
-    component: () => import('/@/pages/page-web/taskcenter.vue')
+    component: () => import('/@/pages/page-web/projects/taskcenter.vue')
   },
 
   // members, devices
