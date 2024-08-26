@@ -1,8 +1,15 @@
 <template>
   <div class="header">任务计划库</div>
   <div class="plan-panel-wrapper">
-    <a-table class="plan-table" :columns="columns" :data-source="plansData.data" row-key="job_id"
-      :pagination="paginationProp" :scroll="{ x: '100%', y: 600 }" @change="refreshData">
+    <a-table
+      class="plan-table"
+      :columns="columns"
+      :data-source="plansData.data"
+      row-key="job_id"
+      :pagination="paginationProp"
+      :scroll="{ x: '100%', y: 600 }"
+      @change="refreshData"
+    >
       <!-- 执行时间 -->
       <template #duration="{ record }">
         <div class="flex-row" style="white-space: pre-wrap">
@@ -20,13 +27,23 @@
       <template #status="{ record }">
         <div>
           <div class="flex-display flex-align-center">
-            <span class="circle-icon" :style="{backgroundColor: formatTaskStatus(record).color}"></span>
+            <span
+              class="circle-icon"
+              :style="{ backgroundColor: formatTaskStatus(record).color }"
+            ></span>
             {{ formatTaskStatus(record).text }}
-            <a-tooltip v-if="!!record.code" placement="bottom" arrow-point-at-center >
+            <a-tooltip
+              v-if="!!record.code"
+              placement="bottom"
+              arrow-point-at-center
+            >
               <template #title>
-              <div>{{ getCodeMessage(record.code) }}</div>
+                <div>{{ getCodeMessage(record.code) }}</div>
               </template>
-              <exclamation-circle-outlined class="ml5" :style="{color: commonColor.WARN, fontSize: '16px' }"/>
+              <exclamation-circle-outlined
+                class="ml5"
+                :style="{ color: commonColor.WARN, fontSize: '16px' }"
+              />
             </a-tooltip>
           </div>
           <div v-if="record.status === TaskStatus.Carrying">
@@ -42,20 +59,33 @@
       <template #lostAction="{ record }">
         <div>{{ formatLostAction(record) }}</div>
       </template>
-     <!-- 媒体上传状态 -->
+      <!-- 媒体上传状态 -->
       <template #media_upload="{ record }">
         <div>
           <div class="flex-display flex-align-center">
-            <span class="circle-icon" :style="{backgroundColor: formatMediaTaskStatus(record).color}"></span>
+            <span
+              class="circle-icon"
+              :style="{ backgroundColor: formatMediaTaskStatus(record).color }"
+            ></span>
             {{ formatMediaTaskStatus(record).text }}
           </div>
           <div class="pl15">
             {{ formatMediaTaskStatus(record).number }}
-            <a-tooltip v-if="formatMediaTaskStatus(record).status === MediaStatus.ToUpload" placement="bottom" arrow-point-at-center >
+            <a-tooltip
+              v-if="
+                formatMediaTaskStatus(record).status === MediaStatus.ToUpload
+              "
+              placement="bottom"
+              arrow-point-at-center
+            >
               <template #title>
-              <div>Upload now</div>
+                <div>Upload now</div>
               </template>
-              <UploadOutlined class="ml5" :style="{color: commonColor.BLUE, fontSize: '16px' }"  @click="onUploadMediaFileNow(record.job_id)"/>
+              <UploadOutlined
+                class="ml5"
+                :style="{ color: commonColor.BLUE, fontSize: '16px' }"
+                @click="onUploadMediaFileNow(record.job_id)"
+              />
             </a-tooltip>
           </div>
         </div>
@@ -102,15 +132,33 @@ import { message } from 'ant-design-vue'
 import { TableState } from 'ant-design-vue/lib/table/interface'
 import { onMounted } from 'vue'
 import { IPage } from '/@/api/http/type'
-import { deleteTask, updateTaskStatus, UpdateTaskStatus, getWaylineJobs, Task, uploadMediaFileNow } from '/@/api/wayline'
+import {
+  deleteTask,
+  updateTaskStatus,
+  UpdateTaskStatus,
+  getWaylineJobs,
+  Task,
+  uploadMediaFileNow,
+} from '/@/api/wayline'
 import { useMyStore } from '/@/store'
 import { ELocalStorageKey } from '/@/types/enums'
 import { useFormatTask } from './use-format-task'
-import { TaskStatus, TaskProgressInfo, TaskProgressStatus, TaskProgressWsStatusMap, MediaStatus, MediaStatusProgressInfo, TaskMediaHighestPriorityProgressInfo } from '/@/types/task'
+import {
+  TaskStatus,
+  TaskProgressInfo,
+  TaskProgressStatus,
+  TaskProgressWsStatusMap,
+  MediaStatus,
+  MediaStatusProgressInfo,
+  TaskMediaHighestPriorityProgressInfo,
+} from '/@/types/task'
 import { useTaskWsEvent } from './use-task-ws-event'
 import { getErrorMessage } from '/@/utils/error-code/index'
 import { commonColor } from '/@/utils/color'
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
+import {
+  ExclamationCircleOutlined,
+  UploadOutlined,
+} from '@ant-design/icons-vue'
 
 const store = useMyStore()
 const workspaceId = localStorage.getItem(ELocalStorageKey.WorkspaceId)!
@@ -118,7 +166,7 @@ const workspaceId = localStorage.getItem(ELocalStorageKey.WorkspaceId)!
 const body: IPage = {
   page: 1,
   total: 0,
-  page_size: 50
+  page_size: 50,
 }
 const paginationProp = reactive({
   pageSizeOptions: ['20', '50', '100'],
@@ -126,93 +174,112 @@ const paginationProp = reactive({
   showSizeChanger: true,
   pageSize: 50,
   current: 1,
-  total: 0
+  total: 0,
 })
 
 const columns = [
   {
-    title: 'Planned/Actual Time',
+    title: '计划时间',
     dataIndex: 'duration',
     width: 200,
     slots: { customRender: 'duration' },
   },
   {
-    title: 'Status',
+    title: '状态',
     key: 'status',
     width: 150,
-    slots: { customRender: 'status' }
+    slots: { customRender: 'status' },
   },
   {
-    title: 'Plan Name',
+    title: '计划名称',
     dataIndex: 'job_name',
+    ellipsis: true,
     width: 100,
+    slots: { customRender: 'job_name' },
   },
   {
-    title: 'Type',
+    title: '计划类型',
     dataIndex: 'taskType',
     width: 100,
     slots: { customRender: 'taskType' },
   },
   {
-    title: 'Flight Route Name',
+    title: '航线名称',
     dataIndex: 'file_name',
     width: 100,
   },
   {
-    title: 'Dock Name',
+    title: '机场名称',
     dataIndex: 'dock_name',
     width: 100,
-    ellipsis: true
+    ellipsis: true,
   },
   {
-    title: 'RTH Altitude Relative to Dock (m)',
+    title: '相对机场返航高度 (m)',
     dataIndex: 'rth_altitude',
     width: 120,
   },
   {
-    title: 'Lost Action',
+    title: '失控',
     dataIndex: 'out_of_control_action',
     width: 120,
     slots: { customRender: 'lostAction' },
   },
   {
-    title: 'Creator',
+    title: '创建者',
     dataIndex: 'username',
     width: 120,
   },
   {
-    title: 'Media File Upload',
+    title: '媒体文件上传',
     key: 'media_upload',
     width: 160,
-    slots: { customRender: 'media_upload' }
+    slots: { customRender: 'media_upload' },
   },
   {
-    title: 'Action',
+    title: '操作',
     width: 120,
-    slots: { customRender: 'action' }
-  }
+    slots: { customRender: 'action' },
+  },
 ]
-type Pagination = TableState['pagination']
+type Pagination = TableState['pagination'];
 
 const plansData = reactive({
-  data: [] as Task[]
+  data: [] as Task[],
 })
 
-const { formatTaskType, formatTaskTime, formatLostAction, formatTaskStatus, formatMediaTaskStatus } = useFormatTask()
+const {
+  formatTaskType,
+  formatTaskTime,
+  formatLostAction,
+  formatTaskStatus,
+  formatMediaTaskStatus,
+} = useFormatTask()
 
 // 设备任务执行进度更新
 function onTaskProgressWs (data: TaskProgressInfo) {
   const { bid, output } = data
   if (output) {
     const { status, progress } = output || {}
-    const taskItem = plansData.data.find(task => task.job_id === bid)
+    const taskItem = plansData.data.find((task) => task.job_id === bid)
     if (!taskItem) return
     if (status) {
       taskItem.status = TaskProgressWsStatusMap[status]
       // 执行中，更新进度
-      if (status === TaskProgressStatus.Sent || status === TaskProgressStatus.inProgress) {
+      if (
+        status === TaskProgressStatus.Sent ||
+        status === TaskProgressStatus.inProgress
+      ) {
         taskItem.progress = progress?.percent || 0
-      } else if ([TaskProgressStatus.Rejected, TaskProgressStatus.Canceled, TaskProgressStatus.Timeout, TaskProgressStatus.Failed, TaskProgressStatus.OK].includes(status)) {
+      } else if (
+        [
+          TaskProgressStatus.Rejected,
+          TaskProgressStatus.Canceled,
+          TaskProgressStatus.Timeout,
+          TaskProgressStatus.Failed,
+          TaskProgressStatus.OK,
+        ].includes(status)
+      ) {
         getPlans()
       }
     }
@@ -221,11 +288,15 @@ function onTaskProgressWs (data: TaskProgressInfo) {
 
 // 媒体上传进度更新
 function onTaskMediaProgressWs (data: MediaStatusProgressInfo) {
-  const { media_count: mediaCount, uploaded_count: uploadedCount, job_id: jobId } = data
+  const {
+    media_count: mediaCount,
+    uploaded_count: uploadedCount,
+    job_id: jobId,
+  } = data
   if (isNaN(mediaCount) || isNaN(uploadedCount) || !jobId) {
     return
   }
-  const taskItem = plansData.data.find(task => task.job_id === jobId)
+  const taskItem = plansData.data.find((task) => task.job_id === jobId)
   if (!taskItem) return
   if (mediaCount === uploadedCount) {
     taskItem.uploading = false
@@ -236,10 +307,12 @@ function onTaskMediaProgressWs (data: MediaStatusProgressInfo) {
   taskItem.uploaded_count = uploadedCount
 }
 
-function onoTaskMediaHighestPriorityWS (data: TaskMediaHighestPriorityProgressInfo) {
+function onoTaskMediaHighestPriorityWS (
+  data: TaskMediaHighestPriorityProgressInfo
+) {
   const { pre_job_id: preJobId, job_id: jobId } = data
-  const preTaskItem = plansData.data.find(task => task.job_id === preJobId)
-  const taskItem = plansData.data.find(task => task.job_id === jobId)
+  const preTaskItem = plansData.data.find((task) => task.job_id === preJobId)
+  const taskItem = plansData.data.find((task) => task.job_id === jobId)
   if (preTaskItem) {
     preTaskItem.uploading = false
   }
@@ -263,7 +336,7 @@ onMounted(() => {
 })
 
 function getPlans () {
-  getWaylineJobs(workspaceId, body).then(res => {
+  getWaylineJobs(workspaceId, body).then((res) => {
     if (res.code !== 0) {
       return
     }
@@ -282,7 +355,7 @@ function refreshData (page: Pagination) {
 // 删除任务
 async function onDeleteTask (jobId: string) {
   const { code } = await deleteTask(workspaceId, {
-    job_id: jobId
+    job_id: jobId,
   })
   if (code === 0) {
     message.success('Deleted successfully')
@@ -294,7 +367,7 @@ async function onDeleteTask (jobId: string) {
 async function onSuspendTask (jobId: string) {
   const { code } = await updateTaskStatus(workspaceId, {
     job_id: jobId,
-    status: UpdateTaskStatus.Suspend
+    status: UpdateTaskStatus.Suspend,
   })
   if (code === 0) {
     message.success('Suspended successfully')
@@ -306,7 +379,7 @@ async function onSuspendTask (jobId: string) {
 async function onResumeTask (jobId: string) {
   const { code } = await updateTaskStatus(workspaceId, {
     job_id: jobId,
-    status: UpdateTaskStatus.Resume
+    status: UpdateTaskStatus.Resume,
   })
   if (code === 0) {
     message.success('Resumed successfully')
@@ -333,7 +406,6 @@ async function onUploadMediaFileNow (jobId: string) {
     margin-top: 10px;
   }
   .action-area {
-
     &::v-deep {
       .ant-btn {
         margin-right: 10px;

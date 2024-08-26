@@ -70,11 +70,11 @@ export interface FlightAreaSyncProgress {
 
 export const FlightAreaTypeTitleMap = {
   [EFlightAreaType.NFZ]: {
-    [EGeometryType.CIRCLE]: 'Circular GEO Zone',
-    [EGeometryType.POLYGON]: 'Polygonal GEO Zone',
+    [EGeometryType.CIRCLE]: '圆形GEO区域',
+    [EGeometryType.POLYGON]: '多边形GEO区域    ',
   },
   [EFlightAreaType.DFENCE]: {
-    [EGeometryType.CIRCLE]: 'Circular Task Area',
-    [EGeometryType.POLYGON]: 'Polygonal Task Area',
+    [EGeometryType.CIRCLE]: '圆形任务区域',
+    [EGeometryType.POLYGON]: '多边形任务区域',
   },
 }

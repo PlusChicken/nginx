@@ -17,13 +17,6 @@ const routes: Array<RouteRecordRaw> = [
     name: ERouterName.PROJECT,
     component: () => import('/@/pages/page-web/index.vue')
   },
-    // taskcenter
-  {
-    path: '/' + ERouterName.TASKCENTER,
-    name: ERouterName.TASKCENTER,
-    component: () => import('/@/pages/page-web/projects/taskcenter.vue')
-  },
-
   // members, devices
   {
     path: '/' + ERouterName.HOME,
@@ -44,8 +37,20 @@ const routes: Array<RouteRecordRaw> = [
         path: '/' + ERouterName.FIRMWARES,
         name: ERouterName.FIRMWARES,
         component: () => import('../pages/page-web/projects/Firmwares.vue')
-      }
+      },
+      // taskcenter
+      {
+        path: '/' + ERouterName.TASKCENTER,
+        name: ERouterName.TASKCENTER,
+        component: () => import('/@/pages/page-web/projects/taskcenter.vue')
+      },
     ]
+  },
+  // screen
+  {
+    path: '/' + ERouterName.TASKSCREEN,
+    name: ERouterName.TASKSCREEN,
+    component: () => import('/@/pages/page-web/projects/task-screen.vue')
   },
   // workspace
   {

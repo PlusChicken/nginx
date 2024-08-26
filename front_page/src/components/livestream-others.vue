@@ -8,59 +8,61 @@
       autoplay
       class="mt20"
     ></video>
-    <p class="fz24">Live streaming source selection</p>
+    <p class="fz24">直播源选择</p>
 
     <div class="flex-row flex-justify-center flex-align-center mt10">
       <template v-if="liveState && isDockLive">
         <span class="mr10">Lens:</span>
         <a-radio-group v-model:value="lensSelected" button-style="solid">
-          <a-radio-button v-for="lens in lensList" :key="lens" :value="lens">{{lens}}</a-radio-button>
+          <a-radio-button v-for="lens in lensList" :key="lens" :value="lens">{{
+            lens
+          }}</a-radio-button>
         </a-radio-group>
       </template>
       <template v-else>
-      <a-select
-        style="width: 150px"
-        placeholder="Select Live Type"
-        @select="onLiveTypeSelect"
-        v-model:value="livetypeSelected"
-      >
-        <a-select-option
-          v-for="item in liveTypeList"
-          :key="item.label"
-          :value="item.value"
+        <a-select
+          style="width: 150px"
+          placeholder="选择直播类型"
+          @select="onLiveTypeSelect"
+          v-model:value="livetypeSelected"
         >
-          {{ item.label }}
-        </a-select-option>
-      </a-select>
-      <a-select
-        class="ml10"
-        style="width:150px"
-        placeholder="Select Drone"
-        v-model:value="droneSelected"
-      >
-        <a-select-option
-          v-for="item in droneList"
-          :key="item.value"
-          :value="item.value"
-          @click="onDroneSelect(item)"
-          >{{ item.label }}</a-select-option
+          <a-select-option
+            v-for="item in liveTypeList"
+            :key="item.label"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          class="ml10"
+          style="width: 150px"
+          placeholder="选择无人机"
+          v-model:value="droneSelected"
         >
-      </a-select>
-      <a-select
-        class="ml10"
-        style="width:150px"
-        placeholder="Select Camera"
-        v-model:value="cameraSelected"
-      >
-        <a-select-option
-          v-for="item in cameraList"
-          :key="item.value"
-          :value="item.value"
-          @click="onCameraSelect(item)"
-          >{{ item.label }}</a-select-option
+          <a-select-option
+            v-for="item in droneList"
+            :key="item.value"
+            :value="item.value"
+            @click="onDroneSelect(item)"
+            >{{ item.label }}</a-select-option
+          >
+        </a-select>
+        <a-select
+          class="ml10"
+          style="width: 150px"
+          placeholder="选择摄像头"
+          v-model:value="cameraSelected"
         >
-      </a-select>
-      <!-- <a-select
+          <a-select-option
+            v-for="item in cameraList"
+            :key="item.value"
+            :value="item.value"
+            @click="onCameraSelect(item)"
+            >{{ item.label }}</a-select-option
+          >
+        </a-select>
+        <!-- <a-select
         class="ml10"
         style="width:150px"
         placeholder="Select Lens"
@@ -77,8 +79,8 @@
       </template>
       <a-select
         class="ml10"
-        style="width:150px"
-        placeholder="Select Clarity"
+        style="width: 150px"
+        placeholder="选择清晰度"
         @select="onClaritySelect"
         v-model:value="claritySelected"
       >
@@ -99,16 +101,27 @@
       </p>
     </div>
     <div class="mt10 flex-row flex-justify-center flex-align-center">
-      <a-button v-if="liveState && isDockLive" type="primary" large @click="onSwitch">Switch Lens</a-button>
-      <a-button v-else type="primary" large @click="onStart">Play</a-button>
+      <a-button
+        v-if="liveState && isDockLive"
+        type="primary"
+        large
+        @click="onSwitch"
+        >Switch Lens</a-button
+      >
+      <a-button v-else type="primary" large @click="onStart">播放</a-button>
       <a-button class="ml20" type="primary" large @click="onStop"
-        >Stop</a-button
+        >暂停</a-button
       >
       <a-button class="ml20" type="primary" large @click="onUpdateQuality"
-        >Update Clarity</a-button
+        >刷新清晰度</a-button
       >
-      <a-button v-if="!liveState || !isDockLive" class="ml20" type="primary" large @click="onRefresh"
-        >Refresh Live Capacity</a-button
+      <a-button
+        v-if="!liveState || !isDockLive"
+        class="ml20"
+        type="primary"
+        large
+        @click="onRefresh"
+        >刷新直播</a-button
       >
     </div>
   </div>
@@ -118,7 +131,13 @@
 import { message } from 'ant-design-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { CURRENT_CONFIG as config } from '/@/api/http/config'
-import { changeLivestreamLens, getLiveCapacity, setLivestreamQuality, startLivestream, stopLivestream } from '/@/api/manage'
+import {
+  changeLivestreamLens,
+  getLiveCapacity,
+  setLivestreamQuality,
+  startLivestream,
+  stopLivestream,
+} from '/@/api/manage'
 import { getRoot } from '/@/root'
 import jswebrtc from '/@/vendors/jswebrtc.min.js'
 import srs from '/@/vendors/srs.sdk.js'
@@ -126,50 +145,50 @@ import srs from '/@/vendors/srs.sdk.js'
 const root = getRoot()
 
 interface SelectOption {
-  value: any,
-  label: string,
-  more?: any
+  value: any;
+  label: string;
+  more?: any;
 }
 
 const liveTypeList: SelectOption[] = [
   {
     value: 1,
-    label: 'RTMP'
+    label: 'RTMP',
   },
   {
     value: 2,
-    label: 'RTSP'
+    label: 'RTSP',
   },
   {
     value: 3,
-    label: 'GB28181'
+    label: 'GB28181',
   },
   {
     value: 4,
-    label: 'WEBRTC'
-  }
+    label: 'WEBRTC',
+  },
 ]
 const clarityList: SelectOption[] = [
   {
     value: 0,
-    label: 'Adaptive'
+    label: '自动',
   },
   {
     value: 1,
-    label: 'Smooth'
+    label: '流畅',
   },
   {
     value: 2,
-    label: 'Standard'
+    label: '标准',
   },
   {
     value: 3,
-    label: 'HD'
+    label: '高清',
   },
   {
     value: 4,
-    label: 'Super Clear'
-  }
+    label: '超清',
+  },
 ]
 
 const videowebrtc = ref(null)
@@ -199,7 +218,7 @@ const onRefresh = async () => {
   cameraSelected.value = null
   videoSelected.value = null
   await getLiveCapacity({})
-    .then(res => {
+    .then((res) => {
       console.log(res)
       if (res.code === 0) {
         if (res.data === null) {
@@ -213,13 +232,17 @@ const onRefresh = async () => {
         const temp: Array<SelectOption> = []
         if (livestreamSource.value) {
           livestreamSource.value.forEach((ele: any) => {
-            temp.push({ label: ele.name + '-' + ele.sn, value: ele.sn, more: ele.cameras_list })
+            temp.push({
+              label: ele.name + '-' + ele.sn,
+              value: ele.sn,
+              more: ele.cameras_list,
+            })
           })
           droneList.value = temp
         }
       }
     })
-    .catch(error => {
+    .catch((error) => {
       message.error(error)
       console.error(error)
     })
@@ -248,7 +271,11 @@ const onStart = async () => {
     return
   }
   videoId.value =
-    droneSelected.value + '/' + cameraSelected.value + '/' + (videoSelected.value || nonSwitchable + '-0')
+    droneSelected.value +
+    '/' +
+    cameraSelected.value +
+    '/' +
+    (videoSelected.value || nonSwitchable + '-0')
 
   let liveURL = ''
   switch (livetypeSelected.value) {
@@ -277,9 +304,9 @@ const onStart = async () => {
     url: liveURL,
     video_id: videoId.value,
     url_type: livetypeSelected.value,
-    video_quality: claritySelected.value
+    video_quality: claritySelected.value,
   })
-    .then(res => {
+    .then((res) => {
       if (res.code !== 0) {
         return
       }
@@ -296,9 +323,9 @@ const onStart = async () => {
               autoplay: true,
               onPlay: (obj: any) => {
                 console.log('start play livestream')
-              }
+              },
             })
-          }
+          },
         })
       } else if (livetypeSelected.value === 2) {
         console.log(res)
@@ -313,7 +340,7 @@ const onStart = async () => {
           autoplay: true,
           onPlay: (obj: any) => {
             console.log('start play livestream')
-          }
+          },
         })
       } else if (livetypeSelected.value === 4) {
         const videoElement = videowebrtc.value as unknown as HTMLMediaElement
@@ -322,17 +349,21 @@ const onStart = async () => {
       }
       liveState.value = true
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err)
     })
 }
 const onStop = () => {
   videoId.value =
-    droneSelected.value + '/' + cameraSelected.value + '/' + (videoSelected.value || nonSwitchable + '-0')
+    droneSelected.value +
+    '/' +
+    cameraSelected.value +
+    '/' +
+    (videoSelected.value || nonSwitchable + '-0')
 
   stopLivestream({
-    video_id: videoId.value
-  }).then(res => {
+    video_id: videoId.value,
+  }).then((res) => {
     if (res.code === 0) {
       message.success(res.message)
       liveState.value = false
@@ -349,10 +380,12 @@ const onUpdateQuality = () => {
   }
   setLivestreamQuality({
     video_id: videoId.value,
-    video_quality: claritySelected.value
-  }).then(res => {
+    video_quality: claritySelected.value,
+  }).then((res) => {
     if (res.code === 0) {
-      message.success('Set the clarity to ' + clarityList[claritySelected.value].label)
+      message.success(
+        'Set the clarity to ' + clarityList[claritySelected.value].label
+      )
     }
   })
 }
@@ -387,7 +420,11 @@ const onCameraSelect = (val: SelectOption) => {
   }
 
   val.more.forEach((ele: any) => {
-    result.push({ label: ele.type, value: ele.index, more: ele.switch_video_types })
+    result.push({
+      label: ele.type,
+      value: ele.index,
+      more: ele.switch_video_types,
+    })
   })
   videoList.value = result
   if (videoList.value.length === 0) {
@@ -408,14 +445,22 @@ const onClaritySelect = (val: any) => {
   claritySelected.value = val
 }
 const onSwitch = () => {
-  if (lensSelected.value === undefined || lensSelected.value === nonSwitchable) {
-    message.info('The ' + nonSwitchable + ' lens cannot be switched, please select the lens to be switched.', 8)
+  if (
+    lensSelected.value === undefined ||
+    lensSelected.value === nonSwitchable
+  ) {
+    message.info(
+      'The ' +
+        nonSwitchable +
+        ' lens cannot be switched, please select the lens to be switched.',
+      8
+    )
     return
   }
   changeLivestreamLens({
     video_id: videoId.value,
-    video_type: lensSelected.value
-  }).then(res => {
+    video_type: lensSelected.value,
+  }).then((res) => {
     if (res.code === 0) {
       message.success('Switching live camera successfully.')
     }
@@ -427,15 +472,18 @@ const playWebrtc = (videoElement: HTMLMediaElement, url: string) => {
   }
   webrtc = new srs.SrsRtcWhipWhepAsync()
   videoElement.srcObject = webrtc.stream
-  webrtc.play(url).then(function (session: any) {
-    console.info(session)
-  }).catch(function (reason: any) {
-    webrtc.close()
-    console.error(reason)
-  })
+  webrtc
+    .play(url)
+    .then(function (session: any) {
+      console.info(session)
+    })
+    .catch(function (reason: any) {
+      webrtc.close()
+      console.error(reason)
+    })
 }
 </script>
 
 <style lang="scss" scoped>
-@import '/@/styles/index.scss';
+@import "/@/styles/index.scss";
 </style>

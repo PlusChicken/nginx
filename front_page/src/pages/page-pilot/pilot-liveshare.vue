@@ -1,17 +1,24 @@
 <template>
-    <div class="width100 flex-column flex-justify-start flex-align-start" style="background-color: white;">
-
-      <p class="fz16 ml10 mt15 mb10 color-text-title color-font-bold" style="color: #939393">
-        Before starting manually, please select the publish mode and livestream type
-      </p>
+  <div
+    class="width100 flex-column flex-justify-start flex-align-start"
+    style="background-color: white"
+  >
+    <p
+      class="fz16 ml10 mt15 mb10 color-text-title color-font-bold"
+      style="color: #939393"
+    >
+      Before starting manually, please select the publish mode and livestream
+      type
+    </p>
     <div
       class="mt15 flex-row flex-align-center flex-justify-between"
-      style="width: 100%;">
+      style="width: 100%"
+    >
       <p class="ml10 mb0 fz16" style="color: black">
         Select Video Publish Mode:
       </p>
       <a-select
-        style="width: 200px; margin-right: 20px;"
+        style="width: 200px; margin-right: 20px"
         placeholder="Select Mode"
         @select="onPublishModeSelect"
       >
@@ -25,16 +32,16 @@
       </a-select>
     </div>
 
-    <div class="ml10 mr10" style="width: 96%; margin-top: -10px;">
+    <div class="ml10 mr10" style="width: 96%; margin-top: -10px">
       <a-divider />
     </div>
     <div
       class="flex-row flex-align-center flex-justify-between"
-      style="width: 100%; margin-top: -10px;"
+      style="width: 100%; margin-top: -10px"
     >
       <p class="ml10 mb0 fz16">Select Livestream Type:</p>
       <a-select
-        style="width: 200px; margin-right: 20px;"
+        style="width: 200px; margin-right: 20px"
         placeholder="Select Live Type"
         :value="liveStreamStatus.type"
         @select="onLiveTypeSelect"
@@ -48,13 +55,16 @@
         </a-select-option>
       </a-select>
     </div>
-    <div class="ml10 mr10" style="width: 96%; margin-top: -10px;">
+    <div class="ml10 mr10" style="width: 96%; margin-top: -10px">
       <a-divider />
     </div>
-    <div class="width-100" style="margin-top: -10px;">
-      <div class="ml10" style="width: 97%;">
+    <div class="width-100" style="margin-top: -10px">
+      <div class="ml10" style="width: 97%">
         <span class="fz16">Param: </span>
-        <span v-if="liveStreamStatus.type === ELiveTypeValue.Agora" style="word-break: break-all; color: #75c5f6;">
+        <span
+          v-if="liveStreamStatus.type === ELiveTypeValue.Agora"
+          style="word-break: break-all; color: #75c5f6"
+        >
           <div class="flex-col flex-justify-center flex-align-center">
             <div>
               <span class="ml10">Token:</span>
@@ -74,55 +84,137 @@
             </div>
           </div>
         </span>
-        <span v-else-if="liveStreamStatus.type === ELiveTypeValue.RTMP" style="word-break: break-all; color: #75c5f6;">{{ rtmpParam }}</span>
-        <span v-else-if="liveStreamStatus.type === ELiveTypeValue.RTSP" style="word-break: break-all; color: #75c5f6;">{{ rtspParam }}</span>
-        <span v-else-if="liveStreamStatus.type === ELiveTypeValue.GB28181" style="word-break: break-all; color: #75c5f6;">{{ gb28181Param }}</span>
+        <span
+          v-else-if="liveStreamStatus.type === ELiveTypeValue.RTMP"
+          style="word-break: break-all; color: #75c5f6"
+          >{{ rtmpParam }}</span
+        >
+        <span
+          v-else-if="liveStreamStatus.type === ELiveTypeValue.RTSP"
+          style="word-break: break-all; color: #75c5f6"
+          >{{ rtspParam }}</span
+        >
+        <span
+          v-else-if="liveStreamStatus.type === ELiveTypeValue.GB28181"
+          style="word-break: break-all; color: #75c5f6"
+          >{{ gb28181Param }}</span
+        >
         <span v-else></span>
       </div>
-
     </div>
-    <div class="ml10 mr10" style="width: 96%; margin-top: -10px;">
+    <div class="ml10 mr10" style="width: 96%; margin-top: -10px">
       <a-divider />
     </div>
-    <div class="mb20 flex-row flex-align-center flex-justify-center"
-      style="width: 100%; ">
-      <a-button class="flex-column fz20 flex-align-center flex-justify-center" style="width: 100px;" type="ghost" @click="onPlay">Play</a-button>
-      <a-button class="flex-column fz20 flex-align-center flex-justify-center ml40" style="width: 100px;" type="ghost" @click="onStop">Stop</a-button>
+    <div
+      class="mb20 flex-row flex-align-center flex-justify-center"
+      style="width: 100%"
+    >
+      <a-button
+        class="flex-column fz20 flex-align-center flex-justify-center"
+        style="width: 100px"
+        type="ghost"
+        @click="onPlay"
+        >Play</a-button
+      >
+      <a-button
+        class="flex-column fz20 flex-align-center flex-justify-center ml40"
+        style="width: 100px"
+        type="ghost"
+        @click="onStop"
+        >Stop</a-button
+      >
     </div>
-    <a-button v-if="playVisiable" class="flex-column flex-align-center" shape="circle" @click="showLivingStatus"
-      style="position: fixed; top: 13vh; left: 5vw; opacity: 0.8; background-color: rgb(0,0,0,0)">
-      <template #icon><CaretRightFilled style="font-size: 26px; color: " /></template>
+    <a-button
+      v-if="playVisiable"
+      class="flex-column flex-align-center"
+      shape="circle"
+      @click="showLivingStatus"
+      style="
+        position: fixed;
+        top: 13vh;
+        left: 5vw;
+        opacity: 0.8;
+        background-color: rgb(0, 0, 0, 0);
+      "
+    >
+      <template #icon
+        ><CaretRightFilled style="font-size: 26px; color: "
+      /></template>
     </a-button>
 
-    <a-drawer  placement="right" v-model:visible="drawerVisible" width="280px" :mask="false" @close="closeDrawer">
+    <a-drawer
+      placement="right"
+      v-model:visible="drawerVisible"
+      width="280px"
+      :mask="false"
+      @close="closeDrawer"
+    >
       <div class="fz16 width-100">
-        <div class="mt20" style=" margin-bottom: -10px;">
+        <div class="mt20" style="margin-bottom: -10px">
           <span class="fz20 flex-row flex-align-center flex-justify-center">
-            <font :color="liveState === EStatusValue.LIVING ? 'green' : liveState === EStatusValue.CONNECTED ? 'blue' : 'red'">{{ liveState }}</font></span>
+            <font
+              :color="
+                liveState === EStatusValue.LIVING
+                  ? 'green'
+                  : liveState === EStatusValue.CONNECTED
+                  ? 'blue'
+                  : 'red'
+              "
+              >{{ liveState }}</font
+            ></span
+          >
         </div>
         <a-divider />
-        <div style=" margin-top: -10px; margin-bottom: -15px;">
-          <span>Frame Rate:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.fps }}<span v-if="liveStreamStatus.fps != -1"> fps</span></span><br/>
+        <div style="margin-top: -10px; margin-bottom: -15px">
+          <span>Frame Rate:</span
+          ><span style="float: right; color: #75c5f6"
+            >{{ liveStreamStatus.fps
+            }}<span v-if="liveStreamStatus.fps != -1"> fps</span></span
+          ><br />
         </div>
         <a-divider />
-        <div style=" margin-top: -10px; margin-bottom: -10px;">
-          <span>Video Bit Rate:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.videoBitRate }}<span v-if="liveStreamStatus.videoBitRate != -1"> kbps</span></span><br/>
+        <div style="margin-top: -10px; margin-bottom: -10px">
+          <span>Video Bit Rate:</span
+          ><span style="float: right; color: #75c5f6"
+            >{{ liveStreamStatus.videoBitRate
+            }}<span v-if="liveStreamStatus.videoBitRate != -1">
+              kbps</span
+            ></span
+          ><br />
         </div>
         <a-divider />
-        <div style=" margin-top: -10px; margin-bottom: -10px;">
-          <span>Audio Bit Rate:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.audioBitRate }}<span v-if="liveStreamStatus.audioBitRate != -1"> kbps</span></span><br/>
+        <div style="margin-top: -10px; margin-bottom: -10px">
+          <span>Audio Bit Rate:</span
+          ><span style="float: right; color: #75c5f6"
+            >{{ liveStreamStatus.audioBitRate
+            }}<span v-if="liveStreamStatus.audioBitRate != -1">
+              kbps</span
+            ></span
+          ><br />
         </div>
         <a-divider />
-        <div style=" margin-top: -10px; margin-bottom: -10px;">
-          <span>Packet Loss Rate:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.dropRate }}<span v-if="liveStreamStatus.dropRate != -1"> %</span></span><br/>
+        <div style="margin-top: -10px; margin-bottom: -10px">
+          <span>Packet Loss Rate:</span
+          ><span style="float: right; color: #75c5f6"
+            >{{ liveStreamStatus.dropRate
+            }}<span v-if="liveStreamStatus.dropRate != -1"> %</span></span
+          ><br />
         </div>
         <a-divider />
-        <div style=" margin-top: -10px; margin-bottom: -10px;">
-          <span>RTT:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.rtt }}<span v-if="liveStreamStatus.rtt != -1"> ms</span></span><br/>
+        <div style="margin-top: -10px; margin-bottom: -10px">
+          <span>RTT:</span
+          ><span style="float: right; color: #75c5f6"
+            >{{ liveStreamStatus.rtt
+            }}<span v-if="liveStreamStatus.rtt != -1"> ms</span></span
+          ><br />
         </div>
         <a-divider />
-        <div style=" margin-top: -10px;">
-          <span >Jitter:</span><span style="float: right; color: #75c5f6;">{{ liveStreamStatus.jitter }}</span><br/>
+        <div style="margin-top: -10px">
+          <span>Jitter:</span
+          ><span style="float: right; color: #75c5f6">{{
+            liveStreamStatus.jitter
+          }}</span
+          ><br />
         </div>
       </div>
     </a-drawer>
@@ -133,7 +225,15 @@
 import { message } from 'ant-design-vue'
 import { onMounted, reactive, ref, UnwrapRef } from 'vue'
 import { CURRENT_CONFIG as config, CURRENT_CONFIG } from '/@/api/http/config'
-import { ELiveTypeName, ELiveTypeValue, GB28181Param, LiveConfigParam, LiveStreamStatus, RTSPParam, EVideoPublishType } from '/@/types/live-stream'
+import {
+  ELiveTypeName,
+  ELiveTypeValue,
+  GB28181Param,
+  LiveConfigParam,
+  LiveStreamStatus,
+  RTSPParam,
+  EVideoPublishType,
+} from '/@/types/live-stream'
 import apiPilot from '/@/api/pilot-bridge'
 import { getRoot } from '/@/root'
 import { ELiveStatusValue, EStatusValue } from '/@/types'
@@ -144,47 +244,47 @@ const root = getRoot()
 const publishModeList = [
   {
     value: EVideoPublishType.VideoOnDemand,
-    label: EVideoPublishType.VideoOnDemand
+    label: EVideoPublishType.VideoOnDemand,
   },
   {
     value: EVideoPublishType.VideoByManual,
-    label: EVideoPublishType.VideoByManual
+    label: EVideoPublishType.VideoByManual,
   },
   {
     value: EVideoPublishType.VideoDemandAuxManual,
-    label: EVideoPublishType.VideoDemandAuxManual
-  }
+    label: EVideoPublishType.VideoDemandAuxManual,
+  },
 ]
 const liveTypeList = [
   {
     value: ELiveTypeValue.Agora,
-    label: ELiveTypeName.Agora
+    label: ELiveTypeName.Agora,
   },
   {
     value: ELiveTypeValue.RTMP,
-    label: ELiveTypeName.RTMP
+    label: ELiveTypeName.RTMP,
   },
   {
     value: ELiveTypeValue.RTSP,
-    label: ELiveTypeName.RTSP
+    label: ELiveTypeName.RTSP,
   },
   {
     value: ELiveTypeValue.GB28181,
-    label: ELiveTypeName.GB28181
-  }
+    label: ELiveTypeName.GB28181,
+  },
 ]
 const agoraParam = reactive({
   uid: '2892130292',
   token: config.agoraToken,
-  channelId: config.agoraChannel
+  channelId: config.agoraChannel,
 })
 const rtmpParam = {
-  url: config.rtmpURL + new Date().getTime()
+  url: config.rtmpURL + new Date().getTime(),
 }
 const rtspParam: RTSPParam = {
   userName: CURRENT_CONFIG.rtspUserName,
   password: CURRENT_CONFIG.rtspPassword,
-  port: CURRENT_CONFIG.rtspPort
+  port: CURRENT_CONFIG.rtspPort,
 }
 const gb28181Param: GB28181Param = {
   serverIp: CURRENT_CONFIG.gbServerIp,
@@ -210,7 +310,7 @@ const liveStreamStatus: LiveStreamStatus = reactive({
   rtt: -1,
   status: -1,
   type: -1,
-  videoBitRate: -1
+  videoBitRate: -1,
 })
 
 onMounted(() => {
@@ -218,7 +318,7 @@ onMounted(() => {
   liveStreamStatus.type = config.type
   refreshLiveType()
 
-  window.liveStatusCallback = arg => {
+  window.liveStatusCallback = (arg) => {
     liveStatusCallback(arg)
   }
 })
@@ -283,19 +383,31 @@ const onPlay = () => {
   }
   switch (liveStreamStatus.type) {
     case 1: {
-      apiPilot.setLiveshareConfig(ELiveTypeValue.Agora, JSON.stringify(agoraParam))
+      apiPilot.setLiveshareConfig(
+        ELiveTypeValue.Agora,
+        JSON.stringify(agoraParam)
+      )
       break
     }
     case 2: {
-      apiPilot.setLiveshareConfig(ELiveTypeValue.RTMP, JSON.stringify(rtmpParam))
+      apiPilot.setLiveshareConfig(
+        ELiveTypeValue.RTMP,
+        JSON.stringify(rtmpParam)
+      )
       break
     }
     case 3: {
-      apiPilot.setLiveshareConfig(ELiveTypeValue.RTSP, JSON.stringify(rtspParam))
+      apiPilot.setLiveshareConfig(
+        ELiveTypeValue.RTSP,
+        JSON.stringify(rtspParam)
+      )
       break
     }
     case 4: {
-      apiPilot.setLiveshareConfig(ELiveTypeValue.GB28181, JSON.stringify(gb28181Param))
+      apiPilot.setLiveshareConfig(
+        ELiveTypeValue.GB28181,
+        JSON.stringify(gb28181Param)
+      )
       break
     }
   }
@@ -318,7 +430,7 @@ const onStop = () => {
     playVisiable.value = false
     drawerVisible.value = false
     setTimeout(() => {
-      let key: (keyof LiveStreamStatus)
+      let key: keyof LiveStreamStatus
       for (key in liveStreamStatus) {
         if (key === 'type') {
           continue

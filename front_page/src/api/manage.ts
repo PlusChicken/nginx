@@ -186,3 +186,15 @@ export const changeFirmareStatus = async function (workspaceId: string, firmware
   const result = await request.put(url, param)
   return result.data
 }
+
+export const getScreenDevice = async function (device_sn: string): Promise<IWorkspaceResponse<any>> {
+  const url = `${HTTP_PREFIX}/devices/screen/${device_sn}`
+  const result = await request.get(url)
+  return result.data
+}
+
+export const getDevicePayload = async function (device_sn: string): Promise<IWorkspaceResponse<string>> {
+  const url = `${HTTP_PREFIX}/devices/screen/paload/${device_sn}`
+  const result = await request.get(url)
+  return result.data
+}

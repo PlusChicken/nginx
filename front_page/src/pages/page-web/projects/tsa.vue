@@ -1,133 +1,419 @@
 <template>
-  <div class="project-tsa-wrapper ">
+  <div class="project-tsa-wrapper">
     <div>
       <a-row>
         <a-col :span="1"></a-col>
-        <a-col :span="11">My Username</a-col>
-        <a-col :span="11" align="right" style="font-weight: 700">{{ username }}</a-col>
+        <a-col :span="11">用户名</a-col>
+        <a-col :span="11" align="right" style="font-weight: 700">{{
+          username
+        }}</a-col>
         <a-col :span="1"></a-col>
       </a-row>
     </div>
-    <div class="scrollbar" :style="{ height: scorllHeight + 'px'}">
-      <a-collapse :bordered="false" expandIconPosition="right" accordion style="background: #232323;">
-        <a-collapse-panel :key="EDeviceTypeName.Dock" header="Dock" style="border-bottom: 1px solid #4f4f4f;">
-          <div v-if="onlineDocks.data.length === 0" style="height: 150px; color: white;">
+    <div class="scrollbar" :style="{ height: scorllHeight + 'px' }">
+      <a-collapse
+        :bordered="false"
+        expandIconPosition="right"
+        accordion
+        style="background: #232323"
+      >
+        <a-collapse-panel
+          :key="EDeviceTypeName.Dock"
+          header="机场"
+          style="border-bottom: 1px solid #4f4f4f"
+        >
+          <div
+            v-if="onlineDocks.data.length === 0"
+            style="height: 150px; color: white"
+          >
             <a-empty :image="noData" :image-style="{ height: '60px' }" />
           </div>
-          <div v-else class="fz12" style="color: white;">
-            <div v-for="dock in onlineDocks.data" :key="dock.sn" style="background: #3c3c3c; height: 90px; width: 250px; margin-bottom: 10px;">
-              <div style="border-radius: 2px; height: 100%; width: 100%;" class="flex-row flex-justify-between flex-align-center">
+          <div v-else class="fz12" style="color: white">
+            <div
+              v-for="dock in onlineDocks.data"
+              :key="dock.sn"
+              style="
+                background: #3c3c3c;
+                height: 90px;
+                width: 250px;
+                margin-bottom: 10px;
+              "
+            >
+              <div
+                style="border-radius: 2px; height: 100%; width: 100%"
+                class="flex-row flex-justify-between flex-align-center"
+              >
                 <div style="float: left; padding: 0px 5px 8px 8px; width: 88%">
-                  <div style="width: 80%; height: 30px; line-height: 30px; font-size: 16px;">
-                    <a-tooltip :title="`${dock.gateway.callsign} - ${dock.callsign ?? 'No Drone'}`">
-                      <div class="text-hidden" style="max-width: 200px;">{{ dock.gateway.callsign }} - {{ dock.callsign ?? 'No Drone' }}</div>
+                  <div
+                    style="
+                      width: 80%;
+                      height: 30px;
+                      line-height: 30px;
+                      font-size: 16px;
+                    "
+                  >
+                    <a-tooltip
+                      :title="`${dock.gateway.callsign} - ${
+                        dock.callsign ?? 'No Drone'
+                      }`"
+                    >
+                      <div class="text-hidden" style="max-width: 200px">
+                        {{ dock.gateway.callsign }} -
+                        {{ dock.callsign ?? "No Drone" }}
+                      </div>
                     </a-tooltip>
                   </div>
-                  <div class="mt5 flex-align-center flex-row flex-justify-between" style="background: #595959;">
+                  <div
+                    class="mt5 flex-align-center flex-row flex-justify-between"
+                    style="background: #595959"
+                  >
                     <div class="flex-align-center flex-row">
                       <span class="ml5 mr5"><RobotOutlined /></span>
-                      <div class="font-bold text-hidden" style="max-width: 80px;" :style="dockInfo[dock.gateway.sn] && dockInfo[dock.gateway.sn].basic_osd?.mode_code !== EDockModeCode.Disconnected ? 'color: #00ee8b' :  'color: red;'">
-                        {{ dockInfo[dock.gateway.sn] ? EDockModeCode[dockInfo[dock.gateway.sn].basic_osd?.mode_code] : EDockModeCode[EDockModeCode.Disconnected] }}
+                      <div
+                        class="font-bold text-hidden"
+                        style="max-width: 80px"
+                        :style="
+                          dockInfo[dock.gateway.sn] &&
+                          dockInfo[dock.gateway.sn].basic_osd?.mode_code !==
+                            EDockModeCode.Disconnected
+                            ? 'color: #00ee8b'
+                            : 'color: red;'
+                        "
+                      >
+                        {{
+                          dockInfo[dock.gateway.sn]
+                            ? EDockModeCode[
+                                dockInfo[dock.gateway.sn].basic_osd?.mode_code
+                              ]
+                            : EDockModeCode[EDockModeCode.Disconnected]
+                        }}
                       </div>
                     </div>
-                    <div class="mr5 flex-align-center flex-row" style="width: 85px; margin-right: 0; height: 18px;">
-                      <div v-if="hmsInfo[dock.gateway.sn]" class="flex-align-center flex-row">
-                          <div :class="hmsInfo[dock.gateway.sn][0].level === EHmsLevel.CAUTION ? 'caution-blink' :
-                            hmsInfo[dock.gateway.sn][0].level === EHmsLevel.WARN ? 'warn-blink' : 'notice-blink'" style="width: 18px; height: 16px; text-align: center;">
-                            <span :style="hmsInfo[dock.gateway.sn].length > 99 ? 'font-size: 11px' : 'font-size: 12px'">{{ hmsInfo[dock.gateway.sn].length }}</span>
-                            <span class="fz10">{{ hmsInfo[dock.gateway.sn].length > 99 ? '+' : ''}}</span>
-                          </div>
-                        <a-popover trigger="click" placement="bottom" color="black" v-model:visible="hmsVisible[dock.gateway.sn]"
-                          @visibleChange="readHms(hmsVisible[dock.gateway.sn], dock.gateway.sn)"
-                          :overlayStyle="{width: '200px', height: '300px'}">
-                          <div :class="hmsInfo[dock.gateway.sn][0].level === EHmsLevel.CAUTION ? 'caution' :
-                            hmsInfo[dock.gateway.sn][0].level === EHmsLevel.WARN ? 'warn' : 'notice'" style="margin-left: 3px; width: 62px; height: 16px;">
-                            <span class="word-loop">{{ hmsInfo[dock.gateway.sn][0].message_en }}</span>
+                    <div
+                      class="mr5 flex-align-center flex-row"
+                      style="width: 85px; margin-right: 0; height: 18px"
+                    >
+                      <div
+                        v-if="hmsInfo[dock.gateway.sn]"
+                        class="flex-align-center flex-row"
+                      >
+                        <div
+                          :class="
+                            hmsInfo[dock.gateway.sn][0].level ===
+                            EHmsLevel.CAUTION
+                              ? 'caution-blink'
+                              : hmsInfo[dock.gateway.sn][0].level ===
+                                EHmsLevel.WARN
+                              ? 'warn-blink'
+                              : 'notice-blink'
+                          "
+                          style="width: 18px; height: 16px; text-align: center"
+                        >
+                          <span
+                            :style="
+                              hmsInfo[dock.gateway.sn].length > 99
+                                ? 'font-size: 11px'
+                                : 'font-size: 12px'
+                            "
+                            >{{ hmsInfo[dock.gateway.sn].length }}</span
+                          >
+                          <span class="fz10">{{
+                            hmsInfo[dock.gateway.sn].length > 99 ? "+" : ""
+                          }}</span>
+                        </div>
+                        <a-popover
+                          trigger="click"
+                          placement="bottom"
+                          color="black"
+                          v-model:visible="hmsVisible[dock.gateway.sn]"
+                          @visibleChange="
+                            readHms(
+                              hmsVisible[dock.gateway.sn],
+                              dock.gateway.sn
+                            )
+                          "
+                          :overlayStyle="{ width: '200px', height: '300px' }"
+                        >
+                          <div
+                            :class="
+                              hmsInfo[dock.gateway.sn][0].level ===
+                              EHmsLevel.CAUTION
+                                ? 'caution'
+                                : hmsInfo[dock.gateway.sn][0].level ===
+                                  EHmsLevel.WARN
+                                ? 'warn'
+                                : 'notice'
+                            "
+                            style="margin-left: 3px; width: 62px; height: 16px"
+                          >
+                            <span class="word-loop">{{
+                              hmsInfo[dock.gateway.sn][0].message_en
+                            }}</span>
                           </div>
                           <template #content>
-                            <a-collapse style="background: black; height: 300px; overflow-y: auto;" :bordered="false" expand-icon-position="right" :accordion="true">
-                              <a-collapse-panel v-for="hms in hmsInfo[dock.gateway.sn]" :key="hms.hms_id" :showArrow="false"
-                                style=" margin: 0 auto 3px auto; border: 0; width: 140px; border-radius: 3px"
-                                :class="hms.level === EHmsLevel.CAUTION ? 'caution' : hms.level === EHmsLevel.WARN ? 'warn' : 'notice'"
-                                >
+                            <a-collapse
+                              style="
+                                background: black;
+                                height: 300px;
+                                overflow-y: auto;
+                              "
+                              :bordered="false"
+                              expand-icon-position="right"
+                              :accordion="true"
+                            >
+                              <a-collapse-panel
+                                v-for="hms in hmsInfo[dock.gateway.sn]"
+                                :key="hms.hms_id"
+                                :showArrow="false"
+                                style="
+                                  margin: 0 auto 3px auto;
+                                  border: 0;
+                                  width: 140px;
+                                  border-radius: 3px;
+                                "
+                                :class="
+                                  hms.level === EHmsLevel.CAUTION
+                                    ? 'caution'
+                                    : hms.level === EHmsLevel.WARN
+                                    ? 'warn'
+                                    : 'notice'
+                                "
+                              >
                                 <template #header="{ isActive }">
-                                  <div class="flex-row flex-align-center" style="width: 130px;">
-                                    <div style="width: 110px;">
-                                      <span class="word-loop">{{ hms.message_en }}</span>
+                                  <div
+                                    class="flex-row flex-align-center"
+                                    style="width: 130px"
+                                  >
+                                    <div style="width: 110px">
+                                      <span class="word-loop">{{
+                                        hms.message_en
+                                      }}</span>
                                     </div>
-                                    <div style="width: 20px; height: 15px; font-size: 10px; z-index: 2 " class="flex-row flex-align-center flex-justify-center"
-                                      :class="hms.level === EHmsLevel.CAUTION ? 'caution' : hms.level === EHmsLevel.WARN ? 'warn' : 'notice'"
+                                    <div
+                                      style="
+                                        width: 20px;
+                                        height: 15px;
+                                        font-size: 10px;
+                                        z-index: 2;
+                                      "
+                                      class="flex-row flex-align-center flex-justify-center"
+                                      :class="
+                                        hms.level === EHmsLevel.CAUTION
+                                          ? 'caution'
+                                          : hms.level === EHmsLevel.WARN
+                                          ? 'warn'
+                                          : 'notice'
+                                      "
                                     >
-                                      <DoubleRightOutlined :rotate="isActive ? 90 : 0" />
+                                      <DoubleRightOutlined
+                                        :rotate="isActive ? 90 : 0"
+                                      />
                                     </div>
                                   </div>
                                 </template>
 
                                 <a-tooltip :title="hms.create_time">
-                                  <div style="color: white;" class="text-hidden">{{ hms.create_time }}</div>
+                                  <div style="color: white" class="text-hidden">
+                                    {{ hms.create_time }}
+                                  </div>
                                 </a-tooltip>
                               </a-collapse-panel>
                             </a-collapse>
                           </template>
                         </a-popover>
                       </div>
-                      <div v-else class="width-100" style="height: 90%; background: rgba(0, 0, 0, 0.35)"></div>
+                      <div
+                        v-else
+                        class="width-100"
+                        style="height: 90%; background: rgba(0, 0, 0, 0.35)"
+                      ></div>
                     </div>
                   </div>
-                  <div class="mt5 flex-align-center flex-row flex-justify-between" style="background: #595959;">
+                  <div
+                    class="mt5 flex-align-center flex-row flex-justify-between"
+                    style="background: #595959"
+                  >
                     <div class="flex-row">
                       <span class="ml5 mr5"><RocketOutlined /></span>
-                      <div class="font-bold text-hidden" style="max-width: 80px" :style="deviceInfo[dock.sn] && deviceInfo[dock.sn].mode_code !== EModeCode.Disconnected ? 'color: #00ee8b' :  'color: red;'">
-                        {{ deviceInfo[dock.sn] ? EModeCode[deviceInfo[dock.sn].mode_code] : EModeCode[EModeCode.Disconnected] }}
+                      <div
+                        class="font-bold text-hidden"
+                        style="max-width: 80px"
+                        :style="
+                          deviceInfo[dock.sn] &&
+                          deviceInfo[dock.sn].mode_code !==
+                            EModeCode.Disconnected
+                            ? 'color: #00ee8b'
+                            : 'color: red;'
+                        "
+                      >
+                        {{
+                          deviceInfo[dock.sn]
+                            ? EModeCode[deviceInfo[dock.sn].mode_code]
+                            : EModeCode[EModeCode.Disconnected]
+                        }}
                       </div>
                     </div>
-                    <div class="mr5 flex-align-center flex-row" style="width: 85px; margin-right: 0; height: 18px;">
-                      <div v-if="hmsInfo[dock.sn]" class="flex-align-center flex-row">
-                        <div :class="hmsInfo[dock.sn][0].level === EHmsLevel.CAUTION ? 'caution-blink' :
-                          hmsInfo[dock.sn][0].level === EHmsLevel.WARN ? 'warn-blink' : 'notice-blink'" style="width: 18px; height: 16px; text-align: center;">
-                          <span :style="hmsInfo[dock.sn].length > 99 ? 'font-size: 11px' : 'font-size: 12px'">{{ hmsInfo[dock.sn].length }}</span>
-                          <span class="fz10">{{ hmsInfo[dock.sn].length > 99 ? '+' : ''}}</span>
+                    <div
+                      class="mr5 flex-align-center flex-row"
+                      style="width: 85px; margin-right: 0; height: 18px"
+                    >
+                      <div
+                        v-if="hmsInfo[dock.sn]"
+                        class="flex-align-center flex-row"
+                      >
+                        <div
+                          :class="
+                            hmsInfo[dock.sn][0].level === EHmsLevel.CAUTION
+                              ? 'caution-blink'
+                              : hmsInfo[dock.sn][0].level === EHmsLevel.WARN
+                              ? 'warn-blink'
+                              : 'notice-blink'
+                          "
+                          style="width: 18px; height: 16px; text-align: center"
+                        >
+                          <span
+                            :style="
+                              hmsInfo[dock.sn].length > 99
+                                ? 'font-size: 11px'
+                                : 'font-size: 12px'
+                            "
+                            >{{ hmsInfo[dock.sn].length }}</span
+                          >
+                          <span class="fz10">{{
+                            hmsInfo[dock.sn].length > 99 ? "+" : ""
+                          }}</span>
                         </div>
-                        <a-popover trigger="click" placement="bottom" color="black" v-model:visible="hmsVisible[dock.sn]" @visibleChange="readHms(hmsVisible[dock.sn], dock.sn)"
-                          :overlayStyle="{width: '200px', height: '300px'}">
-                          <div :class="hmsInfo[dock.sn][0].level === EHmsLevel.CAUTION ? 'caution' :
-                            hmsInfo[dock.sn][0].level === EHmsLevel.WARN ? 'warn' : 'notice'" style="margin-left: 3px; width: 62px; height: 16px;">
-                            <span class="word-loop">{{ hmsInfo[dock.sn][0].message_en }}</span>
+                        <a-popover
+                          trigger="click"
+                          placement="bottom"
+                          color="black"
+                          v-model:visible="hmsVisible[dock.sn]"
+                          @visibleChange="readHms(hmsVisible[dock.sn], dock.sn)"
+                          :overlayStyle="{ width: '200px', height: '300px' }"
+                        >
+                          <div
+                            :class="
+                              hmsInfo[dock.sn][0].level === EHmsLevel.CAUTION
+                                ? 'caution'
+                                : hmsInfo[dock.sn][0].level === EHmsLevel.WARN
+                                ? 'warn'
+                                : 'notice'
+                            "
+                            style="margin-left: 3px; width: 62px; height: 16px"
+                          >
+                            <span class="word-loop">{{
+                              hmsInfo[dock.sn][0].message_en
+                            }}</span>
                           </div>
                           <template #content>
-                            <a-collapse style="background: black; height: 300px; overflow-y: auto;" :bordered="false" expand-icon-position="right" :accordion="true">
-                              <a-collapse-panel v-for="hms in hmsInfo[dock.sn]" :key="hms.hms_id" :showArrow="false"
-                                style=" margin: 0 auto 3px auto; border: 0; width: 140px; border-radius: 3px"
-                                :class="hms.level === EHmsLevel.CAUTION ? 'caution' : hms.level === EHmsLevel.WARN ? 'warn' : 'notice'"
-                                >
+                            <a-collapse
+                              style="
+                                background: black;
+                                height: 300px;
+                                overflow-y: auto;
+                              "
+                              :bordered="false"
+                              expand-icon-position="right"
+                              :accordion="true"
+                            >
+                              <a-collapse-panel
+                                v-for="hms in hmsInfo[dock.sn]"
+                                :key="hms.hms_id"
+                                :showArrow="false"
+                                style="
+                                  margin: 0 auto 3px auto;
+                                  border: 0;
+                                  width: 140px;
+                                  border-radius: 3px;
+                                "
+                                :class="
+                                  hms.level === EHmsLevel.CAUTION
+                                    ? 'caution'
+                                    : hms.level === EHmsLevel.WARN
+                                    ? 'warn'
+                                    : 'notice'
+                                "
+                              >
                                 <template #header="{ isActive }">
-                                  <div class="flex-row flex-align-center" style="width: 130px;">
-                                    <div style="width: 110px;">
-                                      <span class="word-loop">{{ hms.message_en }}</span>
+                                  <div
+                                    class="flex-row flex-align-center"
+                                    style="width: 130px"
+                                  >
+                                    <div style="width: 110px">
+                                      <span class="word-loop">{{
+                                        hms.message_en
+                                      }}</span>
                                     </div>
-                                    <div style="width: 20px; height: 15px; font-size: 10px; z-index: 2 " class="flex-row flex-align-center flex-justify-center"
-                                      :class="hms.level === EHmsLevel.CAUTION ? 'caution' : hms.level === EHmsLevel.WARN ? 'warn' : 'notice'"
+                                    <div
+                                      style="
+                                        width: 20px;
+                                        height: 15px;
+                                        font-size: 10px;
+                                        z-index: 2;
+                                      "
+                                      class="flex-row flex-align-center flex-justify-center"
+                                      :class="
+                                        hms.level === EHmsLevel.CAUTION
+                                          ? 'caution'
+                                          : hms.level === EHmsLevel.WARN
+                                          ? 'warn'
+                                          : 'notice'
+                                      "
                                     >
-                                      <DoubleRightOutlined :rotate="isActive ? 90 : 0" />
+                                      <DoubleRightOutlined
+                                        :rotate="isActive ? 90 : 0"
+                                      />
                                     </div>
                                   </div>
                                 </template>
 
                                 <a-tooltip :title="hms.create_time">
-                                  <div style="color: white;" class="text-hidden">{{ hms.create_time }}</div>
+                                  <div style="color: white" class="text-hidden">
+                                    {{ hms.create_time }}
+                                  </div>
                                 </a-tooltip>
                               </a-collapse-panel>
                             </a-collapse>
                           </template>
                         </a-popover>
                       </div>
-                      <div v-else class="width-100" style="height: 90%; background: rgba(0, 0, 0, 0.35)"></div>
+                      <div
+                        v-else
+                        class="width-100"
+                        style="height: 90%; background: rgba(0, 0, 0, 0.35)"
+                      ></div>
                     </div>
                   </div>
                 </div>
-                <div style="float: right; background: #595959; height: 100%; width: 40px;" class="flex-row flex-justify-center flex-align-center">
-                  <div class="fz16" @click="switchVisible($event, dock, true, dockInfo[dock.gateway.sn] && dockInfo[dock.gateway.sn].basic_osd?.mode_code !== EDockModeCode.Disconnected)">
-                    <a v-if="osdVisible.gateway_sn === dock.gateway.sn && osdVisible.visible"><EyeOutlined /></a>
+                <div
+                  style="
+                    float: right;
+                    background: #595959;
+                    height: 100%;
+                    width: 40px;
+                  "
+                  class="flex-row flex-justify-center flex-align-center"
+                >
+                  <div
+                    class="fz16"
+                    @click="
+                      switchVisible(
+                        $event,
+                        dock,
+                        true,
+                        dockInfo[dock.gateway.sn] &&
+                          dockInfo[dock.gateway.sn].basic_osd?.mode_code !==
+                            EDockModeCode.Disconnected
+                      )
+                    "
+                  >
+                    <a
+                      v-if="
+                        osdVisible.gateway_sn === dock.gateway.sn &&
+                        osdVisible.visible
+                      "
+                      ><EyeOutlined
+                    /></a>
                     <a v-else><EyeInvisibleOutlined /></a>
                   </div>
                 </div>
@@ -136,48 +422,165 @@
           </div>
         </a-collapse-panel>
       </a-collapse>
-      <a-collapse :bordered="false" expandIconPosition="right" accordion style="background: #232323;">
-        <a-collapse-panel :key="EDeviceTypeName.Aircraft" header="Online Devices" style="border-bottom: 1px solid #4f4f4f;">
-          <div v-if="onlineDevices.data.length === 0" style="height: 150px; color: white;">
+      <a-collapse
+        :bordered="false"
+        expandIconPosition="right"
+        accordion
+        style="background: #232323"
+      >
+        <a-collapse-panel
+          :key="EDeviceTypeName.Aircraft"
+          header="在线设备"
+          style="border-bottom: 1px solid #4f4f4f"
+        >
+          <div
+            v-if="onlineDevices.data.length === 0"
+            style="height: 150px; color: white"
+          >
             <a-empty :image="noData" :image-style="{ height: '60px' }" />
           </div>
-          <div v-else class="fz12" style="color: white;">
-            <div v-for="device in onlineDevices.data" :key="device.sn" style="background: #3c3c3c; height: 90px; width: 250px; margin-bottom: 10px;">
+          <div v-else class="fz12" style="color: white">
+            <div
+              v-for="device in onlineDevices.data"
+              :key="device.sn"
+              style="
+                background: #3c3c3c;
+                height: 90px;
+                width: 250px;
+                margin-bottom: 10px;
+              "
+            >
               <div class="battery-slide" v-if="deviceInfo[device.sn]">
-                <div style="background: #535759; width: 100%;"></div>
-                <div class="capacity-percent" :style="{ width: deviceInfo[device.sn].battery.capacity_percent + '%'}"></div>
-                <div class="return-home" :style="{ width: deviceInfo[device.sn].battery.return_home_power + '%'}"></div>
-                <div class="landing" :style="{ width: deviceInfo[device.sn].battery.landing_power + '%'}"></div>
-                <div class="battery" :style="{ left: deviceInfo[device.sn].battery.capacity_percent + '%' }"></div>
+                <div style="background: #535759; width: 100%"></div>
+                <div
+                  class="capacity-percent"
+                  :style="{
+                    width: deviceInfo[device.sn].battery.capacity_percent + '%',
+                  }"
+                ></div>
+                <div
+                  class="return-home"
+                  :style="{
+                    width:
+                      deviceInfo[device.sn].battery.return_home_power + '%',
+                  }"
+                ></div>
+                <div
+                  class="landing"
+                  :style="{
+                    width: deviceInfo[device.sn].battery.landing_power + '%',
+                  }"
+                ></div>
+                <div
+                  class="battery"
+                  :style="{
+                    left: deviceInfo[device.sn].battery.capacity_percent + '%',
+                  }"
+                ></div>
               </div>
-              <div style="border-bottom: 1px solid #515151; border-radius: 2px; height: 50px; width: 100%;" class="flex-row flex-justify-between flex-align-center">
+              <div
+                style="
+                  border-bottom: 1px solid #515151;
+                  border-radius: 2px;
+                  height: 50px;
+                  width: 100%;
+                "
+                class="flex-row flex-justify-between flex-align-center"
+              >
                 <div style="float: left; padding: 5px 5px 8px 8px; width: 88%">
-                  <div style="width: 100%; height: 100%;">
+                  <div style="width: 100%; height: 100%">
                     <a-tooltip>
-                      <template #title>{{ device.model ? `${device.model} - ${device.callsign}` : 'No Drone'}}</template>
-                      <span class="text-hidden" style="max-width: 200px; display: block; height: 20px;">{{ device.model ? `${device.model} - ${device.callsign}` : 'No Drone'}}</span>
+                      <template #title>{{
+                        device.model
+                          ? `${device.model} - ${device.callsign}`
+                          : "No Drone"
+                      }}</template>
+                      <span
+                        class="text-hidden"
+                        style="max-width: 200px; display: block; height: 20px"
+                        >{{
+                          device.model
+                            ? `${device.model} - ${device.callsign}`
+                            : "No Drone"
+                        }}</span
+                      >
                     </a-tooltip>
                   </div>
-                  <div class="mt5" style="background: #595959;">
+                  <div class="mt5" style="background: #595959">
                     <span class="ml5 mr5"><RocketOutlined /></span>
-                    <span class="font-bold" :style="deviceInfo[device.sn] && deviceInfo[device.sn].mode_code !== EModeCode.Disconnected ? 'color: #00ee8b' :  'color: red;'">
-                      {{ deviceInfo[device.sn] ? EModeCode[deviceInfo[device.sn].mode_code] : EModeCode[EModeCode.Disconnected] }}
+                    <span
+                      class="font-bold"
+                      :style="
+                        deviceInfo[device.sn] &&
+                        deviceInfo[device.sn].mode_code !==
+                          EModeCode.Disconnected
+                          ? 'color: #00ee8b'
+                          : 'color: red;'
+                      "
+                    >
+                      {{
+                        deviceInfo[device.sn]
+                          ? EModeCode[deviceInfo[device.sn].mode_code]
+                          : EModeCode[EModeCode.Disconnected]
+                      }}
                     </span>
                   </div>
                 </div>
-                <div style="float: right; background: #595959; height: 50px; width: 40px;" class="flex-row flex-justify-center flex-align-center">
-                  <div class="fz16" @click="switchVisible($event, device, false, deviceInfo[device.sn] && deviceInfo[device.sn].mode_code !== EModeCode.Disconnected)">
-                    <a v-if="osdVisible.sn === device.sn && osdVisible.visible"><EyeOutlined /></a>
+                <div
+                  style="
+                    float: right;
+                    background: #595959;
+                    height: 50px;
+                    width: 40px;
+                  "
+                  class="flex-row flex-justify-center flex-align-center"
+                >
+                  <div
+                    class="fz16"
+                    @click="
+                      switchVisible(
+                        $event,
+                        device,
+                        false,
+                        deviceInfo[device.sn] &&
+                          deviceInfo[device.sn].mode_code !==
+                            EModeCode.Disconnected
+                      )
+                    "
+                  >
+                    <a v-if="osdVisible.sn === device.sn && osdVisible.visible"
+                      ><EyeOutlined
+                    /></a>
                     <a v-else><EyeInvisibleOutlined /></a>
                   </div>
                 </div>
               </div>
-              <div class="flex-row flex-justify-center flex-align-center" style="height: 40px;">
-                <div class="flex-row" style="height: 20px; background: #595959; width: 94%;" >
-                  <span class="mr5"><a-image style="margin-left: 2px; margin-top: -2px; height: 20px; width: 20px;" :src="rc" /></span>
+              <div
+                class="flex-row flex-justify-center flex-align-center"
+                style="height: 40px"
+              >
+                <div
+                  class="flex-row"
+                  style="height: 20px; background: #595959; width: 94%"
+                >
+                  <span class="mr5"
+                    ><a-image
+                      style="
+                        margin-left: 2px;
+                        margin-top: -2px;
+                        height: 20px;
+                        width: 20px;
+                      "
+                      :src="rc"
+                  /></span>
                   <a-tooltip>
-                    <template #title>{{ device.gateway.model }} - {{ device.gateway.callsign }} </template>
-                    <div class="text-hidden" style="max-width: 200px;">{{ device.gateway.model }} - {{ device.gateway.callsign }}</div>
+                    <template #title
+                      >{{ device.gateway.model }} -
+                      {{ device.gateway.callsign }}
+                    </template>
+                    <div class="text-hidden" style="max-width: 200px">
+                      {{ device.gateway.model }} - {{ device.gateway.callsign }}
+                    </div>
                   </a-tooltip>
                 </div>
               </div>
@@ -190,14 +593,37 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, watch, WritableComputedRef } from 'vue'
+import {
+  computed,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+  WritableComputedRef,
+} from 'vue'
 import { EDeviceTypeName, ELocalStorageKey } from '/@/types'
 import noData from '/@/assets/icons/no-data.png'
 import rc from '/@/assets/icons/rc.png'
-import { OnlineDevice, EModeCode, OSDVisible, EDockModeCode, DeviceOsd } from '/@/types/device'
+import {
+  OnlineDevice,
+  EModeCode,
+  OSDVisible,
+  EDockModeCode,
+  DeviceOsd,
+} from '/@/types/device'
 import { useMyStore } from '/@/store'
-import { getDeviceTopo, getUnreadDeviceHms, updateDeviceHms } from '/@/api/manage'
-import { RocketOutlined, EyeInvisibleOutlined, EyeOutlined, RobotOutlined, DoubleRightOutlined } from '@ant-design/icons-vue'
+import {
+  getDeviceTopo,
+  getUnreadDeviceHms,
+  updateDeviceHms,
+} from '/@/api/manage'
+import {
+  RocketOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  RobotOutlined,
+  DoubleRightOutlined,
+} from '@ant-design/icons-vue'
 import { EHmsLevel } from '/@/types/enums'
 
 const store = useMyStore()
@@ -208,11 +634,11 @@ const hmsVisible = new Map<string, boolean>()
 const scorllHeight = ref()
 
 const onlineDevices = reactive({
-  data: [] as OnlineDevice[]
+  data: [] as OnlineDevice[],
 })
 
 const onlineDocks = reactive({
-  data: [] as OnlineDevice[]
+  data: [] as OnlineDevice[],
 })
 
 const deviceInfo = computed(() => store.state.deviceState.deviceInfo)
@@ -221,28 +647,32 @@ const hmsInfo = computed({
   get: () => store.state.hmsInfo,
   set: (val) => {
     return val
-  }
+  },
 })
 
 onMounted(() => {
   getOnlineTopo()
   setTimeout(() => {
-    watch(() => store.state.deviceStatusEvent,
-      data => {
+    watch(
+      () => store.state.deviceStatusEvent,
+      (data) => {
         getOnlineTopo()
         if (data.deviceOnline.sn) {
           getUnreadHms(data.deviceOnline.sn)
         }
       },
       {
-        deep: true
+        deep: true,
       }
     )
     getOnlineDeviceHms()
   }, 3000)
-  const element = document.getElementsByClassName('scrollbar').item(0) as HTMLDivElement
+  const element = document
+    .getElementsByClassName('scrollbar')
+    .item(0) as HTMLDivElement
   const parent = element?.parentNode as HTMLDivElement
-  scorllHeight.value = parent?.clientHeight - parent?.firstElementChild?.clientHeight
+  scorllHeight.value =
+    parent?.clientHeight - parent?.firstElementChild?.clientHeight
 })
 
 function getOnlineTopo () {
@@ -263,9 +693,9 @@ function getOnlineTopo () {
           model: gateway?.device_name,
           callsign: gateway?.nickname,
           sn: gateway?.device_sn,
-          domain: gateway?.domain
+          domain: gateway?.domain,
         },
-        payload: []
+        payload: [],
       }
       child?.payloads_list.forEach((payload: any) => {
         device.payload.push({
@@ -274,7 +704,7 @@ function getOnlineTopo () {
           payload_name: payload.payload_name,
           payload_sn: payload.payload_sn,
           control_source: payload.control_source,
-          payload_index: payload.payload_index
+          payload_index: payload.payload_index,
         })
       })
       if (EDeviceTypeName.Dock === gateway.domain) {
@@ -289,7 +719,12 @@ function getOnlineTopo () {
   })
 }
 
-function switchVisible (e: any, device: OnlineDevice, isDock: boolean, isClick: boolean) {
+function switchVisible (
+  e: any,
+  device: OnlineDevice,
+  isDock: boolean,
+  isClick: boolean
+) {
   if (!isClick) {
     e.target.style.cursor = 'not-allowed'
     return
@@ -310,7 +745,7 @@ function switchVisible (e: any, device: OnlineDevice, isDock: boolean, isClick: 
 }
 
 function getUnreadHms (sn: string) {
-  getUnreadDeviceHms(workspaceId.value, sn).then(res => {
+  getUnreadDeviceHms(workspaceId.value, sn).then((res) => {
     if (res.data.length !== 0) {
       hmsInfo.value[sn] = res.data
     }
@@ -323,21 +758,21 @@ function getOnlineDeviceHms () {
   if (snList.length === 0) {
     return
   }
-  snList.forEach(sn => {
+  snList.forEach((sn) => {
     getUnreadHms(sn)
   })
   const deviceSnList = Object.keys(deviceInfo.value)
   if (deviceSnList.length === 0) {
     return
   }
-  deviceSnList.forEach(sn => {
+  deviceSnList.forEach((sn) => {
     getUnreadHms(sn)
   })
 }
 
 function readHms (visiable: boolean, sn: string) {
   if (!visiable) {
-    updateDeviceHms(workspaceId.value, sn).then(res => {
+    updateDeviceHms(workspaceId.value, sn).then((res) => {
       if (res.code === 0) {
         delete hmsInfo.value[sn]
       }
@@ -352,7 +787,6 @@ function openLivestreamOthers () {
 function openLivestreamAgora () {
   store.commit('SET_LIVESTREAM_AGORA_VISIBLE', true)
 }
-
 </script>
 
 <style lang="scss">
@@ -470,5 +904,4 @@ function openLivestreamAgora () {
     -webkit-transform: translateX(-100%);
   }
 }
-
 </style>

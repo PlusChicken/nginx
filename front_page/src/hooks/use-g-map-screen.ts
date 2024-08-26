@@ -7,6 +7,7 @@ export function useGMapManage () {
     aMap: null, // Map类
     map: null, // 地图对象
     mouseTool: null,
+    infoWindow: null
   })
 
   async function initMap (container: string, app:App) {
@@ -16,7 +17,8 @@ export function useGMapManage () {
       state.aMap = AMap
       state.map = new AMap.Map(container, {
         center: [import.meta.env.VITE_MAP_CENTER_LONGITUDE, import.meta.env.VITE_MAP_CENTER_LATITUDE],
-        zoom: 18
+        zoom: 18,
+        mapStyle: 'amap://styles/grey',
       })
       state.mouseTool = new AMap.MouseTool(state.map)
 

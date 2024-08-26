@@ -1,18 +1,29 @@
-
 <template>
   <a-menu v-model:selectedKeys="current" mode="horizontal" @select="select">
     <a-menu-item :key="EDeviceTypeName.Aircraft" class="ml20">
-      Aircraft
+      无人机
     </a-menu-item>
-    <a-menu-item :key="EDeviceTypeName.Dock">
-      Dock
-    </a-menu-item>
+    <a-menu-item :key="EDeviceTypeName.Dock"> 机场 </a-menu-item>
   </a-menu>
   <div class="device-table-wrap table flex-display flex-column">
-    <a-table :columns="columns" :data-source="data.device" :pagination="paginationProp" @change="refreshData" row-key="device_sn" :expandedRowKeys="expandRows"
-    :row-selection="rowSelection" :rowClassName="rowClassName" :scroll="{ x: '100%', y: 600 }"
-      :expandIcon="expandIcon" :loading="loading">
-      <template v-for="col in ['nickname']" #[col]="{ text, record }" :key="col">
+    <a-table
+      :columns="columns"
+      :data-source="data.device"
+      :pagination="paginationProp"
+      @change="refreshData"
+      row-key="device_sn"
+      :expandedRowKeys="expandRows"
+      :row-selection="rowSelection"
+      :rowClassName="rowClassName"
+      :scroll="{ x: '100%', y: 600 }"
+      :expandIcon="expandIcon"
+      :loading="loading"
+    >
+      <template
+        v-for="col in ['nickname']"
+        #[col]="{ text, record }"
+        :key="col"
+      >
         <div>
           <a-input
             v-if="editableData[record.device_sn]"
@@ -28,16 +39,17 @@
       </template>
       <template v-for="col in ['sn', 'workspace']" #[col]="{ text }" :key="col">
         <a-tooltip :title="text">
-            <span>{{ text }}</span>
+          <span>{{ text }}</span>
         </a-tooltip>
       </template>
       <!-- 固件版本 -->
       <template #firmware_version="{ record }">
         <span v-if="judgeCurrentType(EDeviceTypeName.Dock)">
-          <DeviceFirmwareUpgrade :device="record"
-                                  class="table-flex-col"
-                                  @device-upgrade="onDeviceUpgrade"
-                                 />
+          <DeviceFirmwareUpgrade
+            :device="record"
+            class="table-flex-col"
+            @device-upgrade="onDeviceUpgrade"
+          />
         </span>
         <span v-else>
           {{ record.firmware_version }}
@@ -46,12 +58,28 @@
       <!-- 状态 -->
       <template #status="{ text }">
         <span v-if="text" class="flex-row flex-align-center">
-            <span class="mr5" style="width: 12px; height: 12px; border-radius: 50%; background-color: green;" />
-            <span>Online</span>
+          <span
+            class="mr5"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background-color: green;
+            "
+          />
+          <span>Online</span>
         </span>
         <span class="flex-row flex-align-center" v-else>
-            <span class="mr5" style="width: 12px; height: 12px; border-radius: 50%; background-color: red;" />
-            <span>Offline</span>
+          <span
+            class="mr5"
+            style="
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background-color: red;
+            "
+          />
+          <span>Offline</span>
         </span>
       </template>
       <!-- 操作 -->
@@ -60,42 +88,69 @@
           <!-- 编辑态操作 -->
           <div v-if="editableData[record.device_sn]">
             <a-tooltip title="Confirm changes">
-              <span @click="save(record)" style="color: #28d445;"><CheckOutlined /></span>
+              <span @click="save(record)" style="color: #28d445"
+                ><CheckOutlined
+              /></span>
             </a-tooltip>
             <a-tooltip title="Modification canceled">
-              <span @click="() => delete editableData[record.device_sn]" style="color: #e70102;"><CloseOutlined /></span>
+              <span
+                @click="() => delete editableData[record.device_sn]"
+                style="color: #e70102"
+                ><CloseOutlined
+              /></span>
             </a-tooltip>
           </div>
           <!-- 非编辑态操作 -->
           <div v-else class="flex-align-center flex-row" style="color: #2d8cf0">
-            <a-tooltip v-if="current.indexOf(EDeviceTypeName.Dock) !== -1" title="设备日志">
-              <CloudServerOutlined @click="showDeviceLogUploadRecord(record)"/>
+            <a-tooltip
+              v-if="current.indexOf(EDeviceTypeName.Dock) !== -1"
+              title="设备日志"
+            >
+              <CloudServerOutlined @click="showDeviceLogUploadRecord(record)" />
             </a-tooltip>
-            <a-tooltip v-if="current.indexOf(EDeviceTypeName.Dock) !== -1" title="Hms Info">
-              <FileSearchOutlined @click="showHms(record)"/>
+            <a-tooltip
+              v-if="current.indexOf(EDeviceTypeName.Dock) !== -1"
+              title="Hms Info"
+            >
+              <FileSearchOutlined @click="showHms(record)" />
             </a-tooltip>
             <a-tooltip title="Edit">
-              <EditOutlined @click="edit(record)"/>
+              <EditOutlined @click="edit(record)" />
             </a-tooltip>
             <a-tooltip title="Delete">
-              <DeleteOutlined @click="() => { deleteTip = true, deleteSn = record.device_sn }"/>
+              <DeleteOutlined
+                @click="
+                  () => {
+                    (deleteTip = true), (deleteSn = record.device_sn);
+                  }
+                "
+              />
             </a-tooltip>
           </div>
         </div>
       </template>
-
     </a-table>
-    <a-modal v-model:visible="deleteTip" width="450px" :closable="false" centered :okButtonProps="{ danger: true }" @ok="unbind">
-        <p class="pt10 pl20" style="height: 50px;">Delete device from workspace?</p>
-        <template #title>
-            <div class="flex-row flex-justify-center">
-                <span>Delete devices</span>
-            </div>
-        </template>
+    <a-modal
+      v-model:visible="deleteTip"
+      width="450px"
+      :closable="false"
+      centered
+      :okButtonProps="{ danger: true }"
+      @ok="unbind"
+    >
+      <p class="pt10 pl20" style="height: 50px">
+        Delete device from workspace?
+      </p>
+      <template #title>
+        <div class="flex-row flex-justify-center">
+          <span>Delete devices</span>
+        </div>
+      </template>
     </a-modal>
 
     <!-- 设备升级 -->
-    <DeviceFirmwareUpgradeModal title="设备升级"
+    <DeviceFirmwareUpgradeModal
+      title="设备升级"
       v-model:visible="deviceFirmwareUpgradeModalVisible"
       :device="selectedDevice"
       @ok="onUpgradeDeviceOk"
@@ -108,9 +163,7 @@
     ></DeviceLogUploadRecordDrawer>
 
     <!-- hms 信息 -->
-    <DeviceHmsDrawer
-       v-model:visible="hmsVisible"
-      :device="currentDevice">
+    <DeviceHmsDrawer v-model:visible="hmsVisible" :device="currentDevice">
     </DeviceHmsDrawer>
   </div>
 </template>
@@ -118,42 +171,82 @@
 import { ColumnProps, TableState } from 'ant-design-vue/lib/table/interface'
 import { h, onMounted, reactive, ref, UnwrapRef } from 'vue'
 import { IPage } from '/@/api/http/type'
-import { BindBody, bindDevice, getBindingDevices, unbindDevice, updateDevice } from '/@/api/manage'
+import {
+  BindBody,
+  bindDevice,
+  getBindingDevices,
+  unbindDevice,
+  updateDevice,
+} from '/@/api/manage'
 import { EDeviceTypeName, ELocalStorageKey } from '/@/types'
-import { EditOutlined, CheckOutlined, CloseOutlined, DeleteOutlined, FileSearchOutlined, CloudServerOutlined } from '@ant-design/icons-vue'
+import {
+  EditOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  FileSearchOutlined,
+  CloudServerOutlined,
+} from '@ant-design/icons-vue'
 import { Device, DeviceFirmwareStatusEnum } from '/@/types/device'
 import DeviceFirmwareUpgrade from '/@/components/devices/device-upgrade/DeviceFirmwareUpgrade.vue'
 import DeviceFirmwareUpgradeModal from '/@/components/devices/device-upgrade/DeviceFirmwareUpgradeModal.vue'
 import { useDeviceFirmwareUpgrade } from '/@/components/devices/device-upgrade/use-device-upgrade'
 import { useDeviceUpgradeEvent } from '/@/components/devices/device-upgrade/use-device-upgrade-event'
-import { DeviceCmdExecuteInfo, DeviceCmdExecuteStatus } from '/@/types/device-cmd'
+import {
+  DeviceCmdExecuteInfo,
+  DeviceCmdExecuteStatus,
+} from '/@/types/device-cmd'
 import DeviceLogUploadRecordDrawer from '/@/components/devices/device-log/DeviceLogUploadRecordDrawer.vue'
 import DeviceHmsDrawer from '/@/components/devices/device-hms/DeviceHmsDrawer.vue'
 import { message, notification } from 'ant-design-vue'
 
 interface DeviceData {
-  device: Device[]
+  device: Device[];
 }
 
 const loading = ref(true)
 const deleteTip = ref<boolean>(false)
 const deleteSn = ref<string>()
 const columns: ColumnProps[] = [
-  { title: 'Model', dataIndex: 'device_name', width: 100, className: 'titleStyle' },
-  { title: 'SN', dataIndex: 'device_sn', width: 100, className: 'titleStyle', ellipsis: true, slots: { customRender: 'sn' } },
   {
-    title: 'Name',
+    title: '设备类型',
+    dataIndex: 'device_name',
+    width: 100,
+    className: 'titleStyle',
+  },
+  {
+    title: '设备编号',
+    dataIndex: 'device_sn',
+    width: 100,
+    className: 'titleStyle',
+    ellipsis: true,
+    slots: { customRender: 'sn' },
+  },
+  {
+    title: '设备名称',
     dataIndex: 'nickname',
     width: 100,
     sorter: (a: Device, b: Device) => a.nickname.localeCompare(b.nickname),
     className: 'titleStyle',
     ellipsis: true,
-    slots: { customRender: 'nickname' }
+    slots: { customRender: 'nickname' },
   },
-  { title: 'Firmware Version', dataIndex: 'firmware_version', width: 150, className: 'titleStyle', slots: { customRender: 'firmware_version' } },
-  { title: 'Status', dataIndex: 'status', width: 100, className: 'titleStyle', slots: { customRender: 'status' } },
   {
-    title: 'Workspace',
+    title: '硬件版本',
+    dataIndex: 'firmware_version',
+    width: 150,
+    className: 'titleStyle',
+    slots: { customRender: 'firmware_version' },
+  },
+  {
+    title: '当前状态',
+    dataIndex: 'status',
+    width: 100,
+    className: 'titleStyle',
+    slots: { customRender: 'status' },
+  },
+  {
+    title: '工作空间',
     dataIndex: 'workspace_name',
     width: 100,
     className: 'titleStyle',
@@ -170,26 +263,38 @@ const columns: ColumnProps[] = [
         }
       }
       return obj
-    }
+    },
   },
-  { title: 'Joined', dataIndex: 'bound_time', width: 150, sorter: (a: Device, b: Device) => a.bound_time.localeCompare(b.bound_time), className: 'titleStyle' },
-  { title: 'Last Online', dataIndex: 'login_time', width: 150, sorter: (a: Device, b: Device) => a.login_time.localeCompare(b.login_time), className: 'titleStyle' },
   {
-    title: 'Actions',
+    title: '添加时间',
+    dataIndex: 'bound_time',
+    width: 150,
+    sorter: (a: Device, b: Device) => a.bound_time.localeCompare(b.bound_time),
+    className: 'titleStyle',
+  },
+  {
+    title: '最后上线时间',
+    dataIndex: 'login_time',
+    width: 150,
+    sorter: (a: Device, b: Device) => a.login_time.localeCompare(b.login_time),
+    className: 'titleStyle',
+  },
+  {
+    title: '操作',
     dataIndex: 'actions',
     width: 100,
     className: 'titleStyle',
-    slots: { customRender: 'action' }
+    slots: { customRender: 'action' },
   },
 ]
 
 const expandIcon = (props: any) => {
   if (judgeCurrentType(EDeviceTypeName.Dock) && !props.expanded) {
-    return h('div',
-      {
-        style: 'border-left: 2px solid rgb(200,200,200); border-bottom: 2px solid rgb(200,200,200); height: 16px; width: 16px; float: left;',
-        class: 'mt-5 ml0',
-      })
+    return h('div', {
+      style:
+        'border-left: 2px solid rgb(200,200,200); border-bottom: 2px solid rgb(200,200,200); height: 16px; width: 16px; float: left;',
+      class: 'mt-5 ml0',
+    })
   }
 }
 
@@ -206,7 +311,7 @@ const rowClassName = (record: any, index: number) => {
 
 const expandRows = ref<string[]>([])
 const data = reactive<DeviceData>({
-  device: []
+  device: [],
 })
 
 const paginationProp = reactive({
@@ -215,20 +320,24 @@ const paginationProp = reactive({
   showSizeChanger: true,
   pageSize: 50,
   current: 1,
-  total: 0
+  total: 0,
 })
 
 // 获取分页信息
 function getPaginationBody () {
   return {
     page: paginationProp.current,
-    page_size: paginationProp.pageSize
+    page_size: paginationProp.pageSize,
   } as IPage
 }
 
 const rowSelection = {
   onChange: (selectedRowKeys: (string | number)[], selectedRows: []) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+    console.log(
+      `selectedRowKeys: ${selectedRowKeys}`,
+      'selectedRows: ',
+      selectedRows
+    )
   },
   onSelect: (record: any, selected: boolean, selectedRows: []) => {
     console.log(record, selected, selectedRows)
@@ -237,13 +346,20 @@ const rowSelection = {
     console.log(selected, selectedRows, changeRows)
   },
   getCheckboxProps: (record: any) => ({
-    disabled: judgeCurrentType(EDeviceTypeName.Dock) && record.domain !== EDeviceTypeName.Dock,
-    style: judgeCurrentType(EDeviceTypeName.Dock) && record.domain !== EDeviceTypeName.Dock ? 'display: none' : ''
+    disabled:
+      judgeCurrentType(EDeviceTypeName.Dock) &&
+      record.domain !== EDeviceTypeName.Dock,
+    style:
+      judgeCurrentType(EDeviceTypeName.Dock) &&
+      record.domain !== EDeviceTypeName.Dock
+        ? 'display: none'
+        : '',
   }),
 }
-type Pagination = TableState['pagination']
+type Pagination = TableState['pagination'];
 
-const workspaceId: string = localStorage.getItem(ELocalStorageKey.WorkspaceId) || ''
+const workspaceId: string =
+  localStorage.getItem(ELocalStorageKey.WorkspaceId) || ''
 const editableData: UnwrapRef<Record<string, Device>> = reactive({})
 const current = ref([EDeviceTypeName.Aircraft])
 
@@ -256,7 +372,7 @@ const {
   deviceFirmwareUpgradeModalVisible,
   selectedDevice,
   onDeviceUpgrade,
-  onUpgradeDeviceOk
+  onUpgradeDeviceOk,
 } = useDeviceFirmwareUpgrade(workspaceId)
 
 function onDeviceUpgradeWs (payload: DeviceCmdExecuteInfo) {
@@ -271,16 +387,24 @@ function updateDevicesByWs (devices: Device[], payload: DeviceCmdExecuteInfo) {
     if (devices[i].device_sn === payload.sn) {
       if (!payload.output) return
       const { status, progress, ext } = payload.output
-      if (status === DeviceCmdExecuteStatus.Sent || status === DeviceCmdExecuteStatus.InProgress) { // 升级中
+      if (
+        status === DeviceCmdExecuteStatus.Sent ||
+        status === DeviceCmdExecuteStatus.InProgress
+      ) {
+        // 升级中
         const rate = ext?.rate ? (ext.rate / 1024).toFixed(2) + 'kb/s' : ''
         devices[i].firmware_status = DeviceFirmwareStatusEnum.DuringUpgrade
         devices[i].firmware_progress = (progress?.percent || 0) + '% ' + rate
-      } else { // 终态：成功，失败，超时
-        if (status === DeviceCmdExecuteStatus.Failed || status === DeviceCmdExecuteStatus.Timeout) {
+      } else {
+        // 终态：成功，失败，超时
+        if (
+          status === DeviceCmdExecuteStatus.Failed ||
+          status === DeviceCmdExecuteStatus.Timeout
+        ) {
           notification.error({
             message: `(${payload.sn}) Upgrade failed`,
             description: `Error Code: ${payload.result}`,
-            duration: null
+            duration: null,
           })
         }
         // 拉取列表
@@ -301,7 +425,7 @@ function getDevices (domain: number, closeLoading?: boolean) {
   if (!closeLoading) {
     loading.value = true
   }
-  getBindingDevices(workspaceId, getPaginationBody(), domain).then(res => {
+  getBindingDevices(workspaceId, getPaginationBody(), domain).then((res) => {
     if (res.code !== 0) {
       return
     }
@@ -348,7 +472,7 @@ function showDeleteTip (sn: any) {
 // 解绑
 function unbind () {
   deleteTip.value = false
-  unbindDevice(deleteSn.value?.toString()!).then(res => {
+  unbindDevice(deleteSn.value?.toString()!).then((res) => {
     if (res.code !== 0) {
       return
     }
@@ -383,8 +507,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.device-table-wrap{
-  .editable-row-operations{
+.device-table-wrap {
+  .editable-row-operations {
     div > span {
       margin-right: 10px;
     }
@@ -403,8 +527,8 @@ onMounted(() => {
   background-color: #f7f9fa;
 }
 .ant-table {
-  border-top: 1px solid rgb(0,0,0,0.06);
-  border-bottom: 1px solid rgb(0,0,0,0.06);
+  border-top: 1px solid rgb(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgb(0, 0, 0, 0.06);
 }
 .ant-table-tbody tr td {
   border: 0;

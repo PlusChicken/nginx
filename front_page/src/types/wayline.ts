@@ -4,6 +4,11 @@ export enum WaylineType {
   AccurateReshootingWayline = 1 // 精准复拍航线
 }
 
+export const WaylineTypeMap = {
+  [WaylineType.NormalWaypointWayline]: '普通航点航线',
+  [WaylineType.AccurateReshootingWayline]: '精准复拍航线',
+}
+
 export interface WaylineFile {
   id: string,
   name: string,

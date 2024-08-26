@@ -8,9 +8,9 @@ export enum TaskType {
 }
 
 export const TaskTypeMap = {
-  [TaskType.Immediate]: 'Immediate',
-  [TaskType.Timed]: 'Timed',
-  [TaskType.Condition]: 'Continuous',
+  [TaskType.Immediate]: '立即执行',
+  [TaskType.Timed]: '定时执行',
+  [TaskType.Condition]: '条件执行',
 }
 
 export const TaskTypeOptions = [
@@ -27,9 +27,9 @@ export enum OutOfControlAction {
 }
 
 export const OutOfControlActionMap = {
-  [OutOfControlAction.ReturnToHome]: 'Return to Home',
-  [OutOfControlAction.Hover]: 'Hover',
-  [OutOfControlAction.Land]: 'Land',
+  [OutOfControlAction.ReturnToHome]: '返航',
+  [OutOfControlAction.Hover]: '盘旋',
+  [OutOfControlAction.Land]: '着陆',
 }
 
 export const OutOfControlActionOptions = [
@@ -49,13 +49,22 @@ export enum TaskStatus {
 }
 
 export const TaskStatusMap = {
-  [TaskStatus.Wait]: 'To be performed',
-  [TaskStatus.Carrying]: 'In progress',
-  [TaskStatus.Success]: 'Task completed',
-  [TaskStatus.CanCel]: 'Task canceled',
-  [TaskStatus.Fail]: 'Task failed',
-  [TaskStatus.Paused]: 'Paused',
+  [TaskStatus.Wait]: '待执行',
+  [TaskStatus.Carrying]: '执行中',
+  [TaskStatus.Success]: '完成',
+  [TaskStatus.CanCel]: '取消',
+  [TaskStatus.Fail]: '失败',
+  [TaskStatus.Paused]: '暂停',
 
+}
+
+export const TaskStatusMapString = {
+  PENDING: '待执行',
+  IN_PROGRESS: '执行中',
+  SUCCESS: '完成',
+  CANCEL: '取消',
+  FAILED: '失败',
+  PAUSED: '暂停',
 }
 
 export const TaskStatusColor = {

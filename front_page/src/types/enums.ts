@@ -10,6 +10,7 @@ export enum ERouterName {
     LIVING = 'living',
     WORKSPACE = 'workspace',
     TASKCENTER = 'taskcenter',
+    TASKSCREEN = 'taskscreen',
     MEMBERS = 'members',
     DEVICES = 'devices',
     TASK = 'task',

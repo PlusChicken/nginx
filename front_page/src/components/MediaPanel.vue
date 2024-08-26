@@ -1,26 +1,69 @@
 <template>
-  <div class="header">Media Files</div>
-  <a-spin :spinning="loading" :delay="1000" tip="downloading" size="large">
+  <div class="header">媒体文件</div>
+  <a-spin :spinning="loading" :delay="1500" tip="downloading" size="large">
     <div class="media-panel-wrapper">
-      <a-table class="media-table" :columns="columns" :data-source="mediaData.data" row-key="fingerprint"
-        :pagination="paginationProp" :scroll="{ x: '100%', y: 600 }" @change="refreshData">
-        <template v-for="col in ['name', 'path']" #[col]="{ text }" :key="col">
+      <a-table
+        class="media-table"
+        :columns="columns"
+        :data-source="mediaData.data"
+        row-key="fingerprint"
+        :pagination="paginationProp"
+        :scroll="{ x: '100%', y: 600 }"
+        @change="refreshData"
+      >
+        <template
+          v-for="col in ['name', 'path', 'drone']"
+          #[col]="{ text }"
+          :key="col"
+        >
           <a-tooltip :title="text">
-              <a v-if="col === 'name'">{{ text }}</a>
-              <span v-else>{{ text }}</span>
+            <a v-if="col === 'name'">{{ text }}</a>
+            <span v-else>{{ text }}</span>
           </a-tooltip>
         </template>
         <template #original="{ text }">
           {{ text }}
         </template>
         <template #action="{ record }">
-          <a-tooltip title="download">
-            <a class="fz18" @click="downloadMedia(record)"><DownloadOutlined /></a>
+          <a-tooltip title="下载">
+            <a class="fz18" @click="downloadMedia(record)"
+              ><DownloadOutlined
+            /></a>
+          </a-tooltip>
+          <a-tooltip title="显示">
+            <PictureOutlined
+              class="fz18"
+              :style="{ marginLeft: '10px', color: '#0000FF' }"
+              @click="showModal(record)"
+            />
           </a-tooltip>
         </template>
       </a-table>
     </div>
   </a-spin>
+  <div>
+    <a-modal
+      v-model:visible="visible"
+      @ok="handleOk"
+      :closable="false"
+      :footer="null"
+      style="text-align: center"
+    >
+      <a-image v-if="fileType == 'img'" :width="200" :src="fileSrc" />
+      <video
+        v-if="fileType == 'video'"
+        :style="{
+          width: '100%',
+          height: '100%',
+        }"
+        id="video-webrtc"
+        ref="videowebrtc"
+        :src="fileSrc"
+        controls
+        autoplay
+      ></video>
+    </a-modal>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,8 +73,8 @@ import { onMounted, reactive } from 'vue'
 import { IPage } from '../api/http/type'
 import { ELocalStorageKey } from '../types/enums'
 import { downloadFile } from '../utils/common'
-import { downloadMediaFile, getMediaFiles } from '/@/api/media'
-import { DownloadOutlined } from '@ant-design/icons-vue'
+import { downloadMediaFile, getMediaFiles, getMediaFile } from '/@/api/media'
+import { DownloadOutlined, PictureOutlined } from '@ant-design/icons-vue'
 import { message, Pagination } from 'ant-design-vue'
 import { load } from '@amap/amap-jsapi-loader'
 
@@ -40,47 +83,90 @@ const loading = ref(false)
 
 const columns = [
   {
-    title: 'File Name',
+    title: '文件名',
     dataIndex: 'file_name',
     ellipsis: true,
-    slots: { customRender: 'name' }
+    slots: { customRender: 'name' },
   },
   {
-    title: 'File Path',
+    title: '文件路径',
     dataIndex: 'file_path',
     ellipsis: true,
-    slots: { customRender: 'path' }
+    slots: { customRender: 'path' },
   },
   // {
   //   title: 'FileSize',
   //   dataIndex: 'size',
   // },
   {
-    title: 'Drone',
-    dataIndex: 'drone'
+    title: '无人机',
+    dataIndex: 'drone',
+    ellipsis: true,
+    slots: { customRender: 'drone' },
   },
   {
-    title: 'Payload Type',
-    dataIndex: 'payload'
+    title: '硬件类型',
+    dataIndex: 'payload',
   },
   {
-    title: 'Original',
+    title: '原图',
     dataIndex: 'is_original',
-    slots: { customRender: 'original' }
+    slots: { customRender: 'original' },
   },
   {
-    title: 'Created',
-    dataIndex: 'create_time'
+    title: '创建时间',
+    dataIndex: 'create_time',
   },
   {
-    title: 'Action',
-    slots: { customRender: 'action' }
-  }
+    title: '操作',
+    slots: { customRender: 'action' },
+  },
 ]
+
+interface MediaFile {
+  fingerprint: string;
+  drone: string;
+  payload: string;
+  is_original: string;
+  file_name: string;
+  file_path: string;
+  create_time: string;
+  file_id: string;
+}
+
+const fileType = ref<string>('img')
+const fileSrc = ref<string>('')
+
+const visible = ref<boolean>(false)
+
+function showModal (media: MediaFile) {
+  getMediaFile(workspaceId, media.file_id)
+    .then((res) => {
+      if (!res) {
+        return
+      }
+      fileSrc.value = res.data
+      visible.value = true
+      if (media.file_name.match('.MP4') || media.file_name.match('.mp4')) {
+        fileType.value = 'video'
+      } else {
+        fileType.value = 'img'
+      }
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+const handleOk = (e: MouseEvent) => {
+  console.log(e)
+  visible.value = false
+}
+
 const body: IPage = {
   page: 1,
   total: 0,
-  page_size: 50
+  page_size: 50,
 }
 const paginationProp = reactive({
   pageSizeOptions: ['20', '50', '100'],
@@ -88,24 +174,13 @@ const paginationProp = reactive({
   showSizeChanger: true,
   pageSize: 50,
   current: 1,
-  total: 0
+  total: 0,
 })
 
-type Pagination = TableState['pagination']
-
-interface MediaFile {
-  fingerprint: string,
-  drone: string,
-  payload: string,
-  is_original: string,
-  file_name: string,
-  file_path: string,
-  create_time: string,
-  file_id: string,
-}
+type Pagination = TableState['pagination'];
 
 const mediaData = reactive({
-  data: [] as MediaFile[]
+  data: [] as MediaFile[],
 })
 
 onMounted(() => {
@@ -113,7 +188,7 @@ onMounted(() => {
 })
 
 function getFiles () {
-  getMediaFiles(workspaceId, body).then(res => {
+  getMediaFiles(workspaceId, body).then((res) => {
     mediaData.data = res.data.list
     paginationProp.total = res.data.pagination.total
     paginationProp.current = res.data.pagination.page
@@ -129,17 +204,18 @@ function refreshData (page: Pagination) {
 
 function downloadMedia (media: MediaFile) {
   loading.value = true
-  downloadMediaFile(workspaceId, media.file_id).then(res => {
-    if (!res) {
-      return
-    }
-    const data = new Blob([res])
-    downloadFile(data, media.file_name)
-  }).finally(() => {
-    loading.value = false
-  })
+  downloadMediaFile(workspaceId, media.file_id)
+    .then((res) => {
+      if (!res) {
+        return
+      }
+      const data = new Blob([res])
+      downloadFile(data, media.file_name)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
-
 </script>
 
 <style lang="scss" scoped>

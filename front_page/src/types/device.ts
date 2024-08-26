@@ -512,3 +512,16 @@ export interface DeviceInfoType {
   dock: DockOsd, // 机场
   device: DeviceOsd, // 飞机
 }
+
+export interface ScreenDevice {
+  device_name:string,
+  workspace_name:string,
+  status:string,
+  rtksign:string,
+  capacity_percent:string,
+  gps_sign:string,
+  storage_less:string,
+  firmware_version:string,
+  login_time:string,
+  type:string
+}

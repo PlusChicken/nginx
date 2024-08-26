@@ -8,18 +8,19 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, createApp } from 'vue'
 import { useMyStore } from './store'
 import GMap from '/@/components/GMap.vue'
+import Screen from '/@/components/screen.vue'
 
 export default defineComponent({
   name: 'App',
-  components: { GMap },
+  components: { GMap, Screen },
 
   setup () {
     const store = useMyStore()
     return {}
-  }
+  },
 })
 </script>
 <style lang="scss" scoped>
@@ -37,6 +38,6 @@ export default defineComponent({
 <style lang="scss">
 #demo-app {
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 </style>
