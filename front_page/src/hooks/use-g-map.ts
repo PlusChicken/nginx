@@ -15,8 +15,8 @@ export function useGMapManage () {
     }).then((AMap) => {
       state.aMap = AMap
       state.map = new AMap.Map(container, {
-        center: [113.943225499, 22.577673716],
-        zoom: 20
+        center: [import.meta.env.VITE_MAP_CENTER_LONGITUDE, import.meta.env.VITE_MAP_CENTER_LATITUDE],
+        zoom: 18
       })
       state.mouseTool = new AMap.MouseTool(state.map)
 

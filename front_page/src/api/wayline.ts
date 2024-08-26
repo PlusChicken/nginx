@@ -2,6 +2,8 @@ import { message } from 'ant-design-vue'
 import request, { IPage, IWorkspaceResponse, IListWorkspaceResponse } from '/@/api/http/request'
 import { TaskType, TaskStatus, OutOfControlAction } from '/@/types/task'
 import { WaylineType } from '/@/types/wayline'
+import { JobDevice } from '/@/types/device-job'
+import { ScreenJob, ScreenWayline, DeviceJobInfo } from '/@/types/screen'
 
 const HTTP_PREFIX = '/wayline/api/v1'
 
@@ -135,5 +137,35 @@ export const importKmzFile = async function (workspaceId: string, file: {}): Pro
 export const uploadMediaFileNow = async function (workspaceId: string, jobId: string): Promise<IWorkspaceResponse<{}>> {
   const url = `${HTTP_PREFIX}/workspaces/${workspaceId}/jobs/${jobId}/media-highest`
   const result = await request.post(url)
+  return result.data
+}
+
+/**
+ * 获取作业中心任务分页结果
+ * @param workspace_id
+ * @param body
+ * @returns
+ */
+export const getJobDevices = async function (workspace_id: string, body: IPage): Promise<IListWorkspaceResponse<JobDevice>> {
+  const url = `${HTTP_PREFIX}/workspaces/screen/${workspace_id}/job/list?&page=${body.page}&page_size=${body.page_size}`
+  const result = await request.get(url)
+  return result.data
+}
+
+export const getScreenJob = async function (job_id: string): Promise<IListWorkspaceResponse<ScreenJob>> {
+  const url = `${HTTP_PREFIX}/workspaces/screen/${job_id}`
+  const result = await request.get(url)
+  return result.data
+}
+
+export const getScreenWayline = async function (workspace_id: string, wayline_id: string): Promise<IListWorkspaceResponse<ScreenWayline>> {
+  const url = `${HTTP_PREFIX}/workspaces/screen/${workspace_id}/${wayline_id}`
+  const result = await request.get(url)
+  return result.data
+}
+
+export const getDeviceJobInfo = async function (workspace_id: string, device_sn: string): Promise<IListWorkspaceResponse<DeviceJobInfo>> {
+  const url = `${HTTP_PREFIX}/workspaces/screen/${workspace_id}/device/${device_sn}`
+  const result = await request.get(url)
   return result.data
 }

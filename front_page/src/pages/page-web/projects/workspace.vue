@@ -91,8 +91,7 @@ const messageHandler = async (payload: any) => {
     case EBizCode.ChargeOpen:
     case EBizCode.ChargeClose:
     case EBizCode.DeviceFormat:
-    case EBizCode.DroneFormat:
-    {
+    case EBizCode.DroneFormat: {
       store.commit('SET_DEVICES_CMD_EXECUTE_INFO', {
         biz_code: payload.biz_code,
         timestamp: payload.timestamp,
@@ -104,8 +103,7 @@ const messageHandler = async (payload: any) => {
     case EBizCode.FlyToPointProgress:
     case EBizCode.TakeoffToPointProgress:
     case EBizCode.JoystickInvalidNotify:
-    case EBizCode.DrcStatusNotify:
-    {
+    case EBizCode.DrcStatusNotify: {
       EventBus.emit('droneControlWs', payload)
       break
     }
@@ -128,10 +126,9 @@ const messageHandler = async (payload: any) => {
 
 // 监听ws 消息
 useConnectWebSocket(messageHandler)
-
 </script>
 <style lang="scss" scoped>
-@import '/@/styles/index.scss';
+@import "/@/styles/index.scss";
 
 .project-app-wrapper {
   display: flex;
@@ -141,8 +138,8 @@ useConnectWebSocket(messageHandler)
 
   .left {
     display: flex;
-    width: 335px;
-    flex: 0 0 335px;
+    width: 500px;
+    flex: 0 0 500px;
     background-color: #232323;
 
     .main-content {
@@ -156,7 +153,7 @@ useConnectWebSocket(messageHandler)
     flex-grow: 1;
     position: relative;
 
-    .map-wrapper{
+    .map-wrapper {
       width: 100%;
       height: 100%;
     }

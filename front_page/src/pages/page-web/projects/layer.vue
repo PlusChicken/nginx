@@ -1,24 +1,31 @@
 <template>
   <div class="project-layer-wrapper height-100">
-    <div style="height: 50px; line-height: 50px; border-bottom: 1px solid #4f4f4f; font-weight: 450;">
+    <div
+      style="
+        height: 50px;
+        line-height: 50px;
+        border-bottom: 1px solid #4f4f4f;
+        font-weight: 450;
+      "
+    >
       <a-row>
         <a-col :span="1"></a-col>
-        <a-col :span="22">Annotations</a-col>
+        <a-col :span="22">地图标注</a-col>
         <a-col :span="1"></a-col>
       </a-row>
     </div>
-    <div class="scrollbar" :style="{ height: scorllHeight + 'px'}">
-    <LayersTree
-      :layer-data="mapLayers"
-      class="project-layer-content"
-      @check="checkLayer"
-      @select="selectLayer"
-      v-model:selectedKeys="selectedKeys"
-      v-model:checkedKeys="checkedKeys"
-    />
+    <div class="scrollbar" :style="{ height: scorllHeight + 'px' }">
+      <LayersTree
+        :layer-data="mapLayers"
+        class="project-layer-content"
+        @check="checkLayer"
+        @select="selectLayer"
+        v-model:selectedKeys="selectedKeys"
+        v-model:checkedKeys="checkedKeys"
+      />
     </div>
     <a-drawer
-      title="Map Element"
+      title="地图元素"
       placement="right"
       :closable="true"
       v-model:visible="visible"
@@ -29,10 +36,10 @@
     >
       <div class="drawer-element-content">
         <div class="name element-item">
-          <span class="title">Name:</span>
+          <span class="title">名称:</span>
           <a-input
             v-model:value="layerState.layerName"
-            style="width:120px"
+            style="width: 120px"
             placeholder="element name"
             @change="changeLayer"
           />
@@ -41,10 +48,10 @@
           class="longitude element-item"
           v-if="layerState.currentType === geoType.Point"
         >
-          <span class="title">Longitude:</span>
+          <span class="title">经度:</span>
           <a-input
             v-model:value="layerState.longitude"
-            style="width:120px"
+            style="width: 120px"
             placeholder="longitude"
             @change="changeLayer"
           />
@@ -53,16 +60,16 @@
           class="latitude element-item"
           v-if="layerState.currentType === geoType.Point"
         >
-          <span class="title">Latitude:</span>
+          <span class="title">纬度:</span>
           <a-input
             v-model:value="layerState.latitude"
-            style="width:120px"
+            style="width: 120px"
             placeholder="latitude"
             @change="changeLayer"
           />
         </div>
         <div class="color-content">
-          <span class="mr30">Color: </span>
+          <span class="mr30">颜色: </span>
           <div
             v-for="item in colors"
             :key="item.id"
@@ -79,7 +86,7 @@
         </div>
       </div>
       <div class="flex-row flex-justify-around flex-align-center mt20">
-        <a-button type="primary" @click="deleteElement">Delete</a-button>
+        <a-button type="primary" @click="deleteElement">删除</a-button>
       </div>
     </a-drawer>
   </div>
@@ -90,7 +97,7 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import {
   deleteElementReq,
   getElementGroupsReq,
-  updateElementsReq
+  updateElementsReq,
 } from '/@/api/layer'
 import LayersTree from '/@/components/LayersTree.vue'
 import { MapDoodleColor, MapElementEnum } from '/@/constants/map'
@@ -120,7 +127,7 @@ const layerState = reactive({
   longitude: 0,
   latitude: 0,
   currentType: '', // “LineString”,"Polygon","Point"
-  color: '#212121'
+  color: '#212121',
 })
 const colors = ref<Color[]>([
   { id: 1, name: 'BLUE', color: '#2D8CF0', selected: true },
@@ -128,7 +135,7 @@ const colors = ref<Color[]>([
   { id: 3, name: 'YELLOW', color: '#FFBB00', selected: false },
   { id: 4, name: 'ORANGE', color: '#B620E0', selected: false },
   { id: 5, name: 'RED', color: '#E23C39', selected: false },
-  { id: 6, name: 'NAME_DEFAULT', color: '#212121', selected: false }
+  { id: 6, name: 'NAME_DEFAULT', color: '#212121', selected: false },
 ])
 const scorllHeight = ref()
 
@@ -140,7 +147,7 @@ async function getAllElement () {
   }, 1000)
 }
 function initMapCover () {
-  mapLayers.value.forEach(item => {
+  mapLayers.value.forEach((item) => {
     if (item.elements) {
       setMapCoverByElement(item.elements)
     }
@@ -148,15 +155,15 @@ function initMapCover () {
 }
 watch(
   () => store.state.Layers,
-  newData => {
+  (newData) => {
     mapLayers.value = newData
   },
   {
-    deep: true
+    deep: true,
   }
 )
 function setMapCoverByElement (elements: LayerResource[]) {
-  elements.forEach(element => {
+  elements.forEach((element) => {
     const name = element.name
     const color = element.resource?.content.properties.color
     const type = element.resource?.type as number
@@ -205,7 +212,7 @@ function getCurrentLayer (id: string) {
   // console.log('selectedKey.value', selectedKey.value)
   let layer = null
   const findCan = function (V) {
-    V.forEach(item => {
+    V.forEach((item) => {
       if (item.id === key) {
         layer = item
       }
@@ -231,7 +238,10 @@ function setBaseInfo () {
     let coordinate: GeojsonCoordinate
     switch (geoType) {
       case GeoType.Point:
-        coordinate = gcj02towgs84(layer.resource?.content.geometry.coordinates[0], layer.resource?.content.geometry.coordinates[1]) as GeojsonCoordinate
+        coordinate = gcj02towgs84(
+          layer.resource?.content.geometry.coordinates[0],
+          layer.resource?.content.geometry.coordinates[1]
+        ) as GeojsonCoordinate
         layerState.longitude = coordinate[0]
         layerState.latitude = coordinate[1]
         break
@@ -243,9 +253,12 @@ function setBaseInfo () {
   }
 }
 onMounted(() => {
-  const element = document.getElementsByClassName('scrollbar').item(0) as HTMLDivElement
+  const element = document
+    .getElementsByClassName('scrollbar')
+    .item(0) as HTMLDivElement
   const parent = element?.parentNode as HTMLDivElement
-  scorllHeight.value = parent?.clientHeight - parent.firstElementChild!.clientHeight
+  scorllHeight.value =
+    parent?.clientHeight - parent.firstElementChild!.clientHeight
   getAllElement()
 })
 function closeDrawer () {
@@ -278,7 +291,7 @@ async function deleteElement () {
 async function getElementGroups (type?: string) {
   const result = await getElementGroupsReq({
     groupId: '',
-    isDistributed: true
+    isDistributed: true,
   })
   mapLayers.value = result.data
   mapLayers.value = updateWgs84togcj02()
@@ -293,16 +306,16 @@ async function updateElements () {
     const position = {
       height: 0,
       latitude: Number(layerState.latitude || 0),
-      longitude: Number(layerState.longitude || 0)
+      longitude: Number(layerState.longitude || 0),
     }
     const cxt = generatePoint(position, {
       color: layerState.color || MapDoodleColor.PinColor,
-      clampToGround: true
+      clampToGround: true,
     })
     content = {
       type: MapElementEnum.PIN,
       geometry: cxt.geometry,
-      properties: cxt.properties
+      properties: cxt.properties,
     }
     const currentLayer = selectedLayer.value
     currentLayer.resource.content = content
@@ -315,16 +328,16 @@ async function updateElements () {
   updateMapElement(selectedLayer.value, layerState.layerName, layerState.color)
   const result = await updateElementsReq(layerState.layerId, {
     name: layerState.layerName,
-    content: content
+    content: content,
   })
   getElementGroups()
 }
 
 function updateWgs84togcj02 () {
   const layers = mapLayers.value
-  layers.forEach(item => {
+  layers.forEach((item) => {
     if (item.elements) {
-      item.elements.forEach(ele => {
+      item.elements.forEach((ele) => {
         updateCoordinates('wgs84-gcj02', ele)
       })
     }
@@ -396,7 +409,7 @@ function updateCoordinates (transformType: string, element: LayerResource) {
 </script>
 
 <style lang="scss" scoped>
-@import '/@/styles/index.scss';
+@import "/@/styles/index.scss";
 </style>
 <style lang="scss">
 .drawer-element-wrapper {

@@ -8,6 +8,8 @@ export const CURRENT_CONFIG = {
   // http
   baseURL: 'http://120.27.159.164:6789/', // This url must end with "/". Example: 'http://192.168.1.1:6789/'
   websocketURL: 'ws://120.27.159.164:6789/api/v1/ws', // Example: 'ws://192.168.1.1:6789/api/v1/ws'
+  // baseURL: 'http://127.0.0.1:6789/', // This url must end with "/". Example: 'http://192.168.1.1:6789/'
+  // websocketURL: 'ws://127.0.0.1:6789/api/v1/ws', // Example: 'ws://192.168.1.1:6789/api/v1/ws'
 
   // livestreaming
   // RTMP  Note: This IP is the address of the streaming server. If you want to see livestream on web page, you need to convert the RTMP stream to WebRTC stream.

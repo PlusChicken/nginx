@@ -24,7 +24,7 @@ export function useFlightArea () {
   const MIN_RADIUS = 10
   function checkCircle (obj: any): boolean {
     if (obj.getRadius() < MIN_RADIUS) {
-      message.error(`The radius must be greater than ${MIN_RADIUS}m.`)
+      message.error(`圆形必须大于${MIN_RADIUS}m.`)
       root.$map.remove(obj)
       return false
     }
@@ -34,7 +34,7 @@ export function useFlightArea () {
   function checkPolygon (obj: any): boolean {
     const path: any[][] = obj.getPath()
     if (path.length < 3) {
-      message.error('The path of the polygon cannot be crossed.')
+      message.error('多边形的路径必须闭合')
       root.$map.remove(obj)
       return false
     }
