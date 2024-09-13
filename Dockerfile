@@ -4,10 +4,9 @@ WORKDIR /app
 
 ADD front_page/ .
 
-# RUN npm install
+RUN npm install
 
-# RUN npm run build
-
+RUN npm run build
 
 FROM nginx:stable as stage
 
